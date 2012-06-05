@@ -18,18 +18,37 @@
                ;; :comment
                ))
 
-(defn get-content [ast]
-  (get ast :content))
 
-(defn get-first-statement [ast]
-  (get-content (first (get-content ast))))
+(defmulti check-ast (fn [_ expected] (class expected)))
 
-(defn check-tag-seq [ast tags]
-  (doseq [[ast-node expected-tag] (map vector ast tags)]
-    (is (= (get ast-node :tag) expected-tag))))
+(defmethod check-ast java.util.Map [actual expected]
+  (def actual-tag (:tag actual))
+  (is (contains? expected actual-tag)) ;; check parent
+  (check-ast (:content actual) (actual-tag expected))) ;; recurse sub tree
+
+(defmethod check-ast java.util.List [actual expected]
+  (doseq [[actual-node expected-tag] (map vector actual expected)]
+    (check-ast actual-node expected-tag)))
+
+(defmethod check-ast clojure.lang.Keyword [actual expected]
+  (is (= (:tag actual) expected)))
+
+
 
 ;; assignment tests
 
-(deftest assignment
-  (check-tag-seq (get-first-statement (isla-parser "atom is 1"))
-                 [:atom :ws :is :ws :value]))
+(deftest assignment-number
+  (check-ast (isla-parser "age is 1")
+             {:root
+              [{:assignment
+                [:atom :ws :is :ws {:value
+                                    [:number]}]}]})
+  )
+
+(deftest assignment-variable
+  (check-ast (isla-parser "age is x")
+             {:root
+              [{:assignment
+                [:atom :ws :is :ws {:value
+                                    [:atom]}]}]})
+  )
