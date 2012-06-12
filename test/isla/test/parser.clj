@@ -50,7 +50,7 @@
                                   {:value [{:string ["cool"]}]}]}]}]}]}))
 
 
-;; ;; blocks
+;; blocks
 
 (deftest two-expression-block
   (check-ast (parse "isla is 1\nmary is 2")
