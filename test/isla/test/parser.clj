@@ -64,3 +64,12 @@
                                  [{:assignee ["mary"]}
                                   {:is [:is]}
                                   {:value [{:integer [2]}]}]}]}]}]}))
+
+;; invocation
+
+(deftest invoke-fn-one-param
+  (check-ast (parse "write 'isla'")
+             {:root [{:block [{:expression
+                               [{:assignment
+                                 [{:identifier ["write"]}
+                                  {:value [{:string ["isla"]}]}]}]}]}]}))

@@ -9,7 +9,7 @@
 (declare expression-types atom-types value-types
          parse matched-nodes is-type pattern-sequence
          -root -block -expression -atom -assignment
-         -nl -integer -is -string -assignee -value)
+         -nl -integer -is -string -assignee -value -identifier)
 
 (defn parse [code]
   (-root (lex code)))
@@ -51,10 +51,18 @@
     {:expr nil :left-tokens tokens})) ;; no expr match - return
 
 (defn -assignment [tokens]
-  (if (> (count tokens) 3)
+  (if (>= (count tokens) 4)
     (let [nodes (pattern-sequence tokens [-assignee -is -value -nl] [])]
       (if (= (count nodes) 4)
         {:expr (nnode :assignment (take 3 nodes)) :left-tokens (nthrest tokens 4)}
+        nil))
+    nil))
+
+(defn -invocation [tokens]
+  (if (>= (count tokens) 3)
+    (let [nodes (pattern-sequence tokens [-identifier -value -nl] [])]
+      (if (= (count nodes) 3)
+        {:expr (nnode :assignment (take 2 nodes)) :left-tokens (nthrest tokens 3)}
         nil))
     nil))
 
@@ -118,6 +126,6 @@
 
 ;; types
 
-(def expression-types [-assignment])
+(def expression-types [-assignment -invocation])
 (def atom-types [-nl])
 (def value-types [-string -integer -identifier])
