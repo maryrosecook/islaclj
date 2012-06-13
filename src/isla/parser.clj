@@ -62,7 +62,7 @@
   (if (>= (count tokens) 3)
     (let [nodes (pattern-sequence tokens [-identifier -value -nl] [])]
       (if (= (count nodes) 3)
-        {:expr (nnode :assignment (take 2 nodes)) :left-tokens (nthrest tokens 3)}
+        {:expr (nnode :invocation (take 2 nodes)) :left-tokens (nthrest tokens 3)}
         nil))
     nil))
 
