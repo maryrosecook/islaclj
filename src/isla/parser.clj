@@ -67,9 +67,10 @@
     nil))
 
 (defn pattern-sequence [tokens patterns collected]
-  (if (> (count patterns) 0)
-      (pattern-sequence (rest tokens) (rest patterns)
-                        (conj collected ((first patterns) (first tokens))))
+  (if (> (count patterns) 0) ;; still patterns to test
+    (if-let [node ((first patterns) (first tokens))] ;; pattern matches token
+      (pattern-sequence (rest tokens) (rest patterns) (conj collected node))
+      collected)
     collected))
 
 
