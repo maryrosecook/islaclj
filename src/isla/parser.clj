@@ -39,7 +39,7 @@
   (let [{expr :expr left-tokens :left-tokens} (-expression tokens [])]
     (if (= expr nil)
       (nnode :block collected) ;; no more exprs, return block
-      (-block left-tokens (conj collected expr))))) ;; no more exprs, return block
+      (-block left-tokens (conj collected expr))))) ;; add expr, continue collecting more
 
 ;; expressions
 
