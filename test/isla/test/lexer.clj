@@ -17,3 +17,6 @@
 
 (deftest extra-whitespace
   (is (= (lex "   la    is   1  \n la   is    1  ") ["la" "is" "1" :nl "la" "is" "1" :nl])))
+
+(deftest test-keep-strings-intact
+  (is (= (lex "name is 'isla eve'") ["name" "is" "'isla eve'" :nl])))
