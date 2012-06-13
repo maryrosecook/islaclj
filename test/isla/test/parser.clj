@@ -65,11 +65,38 @@
                                   {:is [:is]}
                                   {:value [{:integer [2]}]}]}]}]}]}))
 
+
+
+(deftest three-expression-block
+  (check-ast (parse "name is 'Isla'\nwrite 'la'\nwrite name")
+             {:root [{:block [{:expression
+                               [{:assignment
+                                 [{:assignee ["name"]}
+                                  {:is [:is]}
+                                  {:value [{:string ["Isla"]}]}]}]}
+                              {:expression
+                               [{:invocation
+                                 [{:identifier ["write"]}
+                                  {:value [{:string ["la"]}]}]}]}
+                              {:expression
+                               [{:invocation
+                                 [{:identifier ["write"]}
+                                  {:value [{:identifier ["name"]}]}]}]}
+                              ]}]}))
+
+
 ;; invocation
 
 (deftest invoke-fn-one-param
   (check-ast (parse "write 'isla'")
              {:root [{:block [{:expression
-                               [{:assignment
+                               [{:invocation
                                  [{:identifier ["write"]}
                                   {:value [{:string ["isla"]}]}]}]}]}]}))
+
+(deftest test-write-string-regression
+  (check-ast (parse "write 'My name is Isla'")
+             {:root [{:block [{:expression
+                               [{:invocation
+                                 [{:identifier ["write"]}
+                                  {:value [{:string ["My name is Isla"]}]}]}]}]}]}))
