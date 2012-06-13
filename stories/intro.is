@@ -1,0 +1,3 @@
+name is 'Isla'
+write 'My name is'
+write name
