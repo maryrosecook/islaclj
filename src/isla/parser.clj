@@ -6,15 +6,14 @@
 (defn nnode [tag data]
   {:tag tag :content data})
 
-(declare expression-types atom-types value-types
-         parse matched-nodes is-type pattern-sequence
-         -root -block -expression -atom -assignment
+(declare parse alternatives is-type pattern-sequence
+         -root -block -expression -assignment -invocation
          -nl -integer -is -string -assignee -value -identifier)
 
 (defn parse [code]
   (-root (lex code)))
 
-(defn matched-nodes [input types] ;; bit round the houses
+(defn alternatives [input types] ;; bit round the houses
   (vec (map (fn [t] (t input)) ;; get nodes for each matching type
             (filter (fn [t] (not= nil (t input))) ;; get matching types
                     types))))
@@ -44,7 +43,7 @@
 ;; expressions
 
 (defn -expression [tokens collected]
-  (def expressions (matched-nodes tokens expression-types)) ;; candidates
+  (def expressions (alternatives tokens [-assignment -invocation]))
   (if (> (count expressions) 0)
     (let [{expr :expr left-tokens :left-tokens} (first expressions)]
       {:expr (nnode :expression [expr]) :left-tokens left-tokens}) ;; return expr
@@ -70,60 +69,34 @@
       collected)
     collected))
 
-
-
-
-
+;; only one token, for now
+(defn pattern [input matcher tag & args]
+  (if (is-type matcher input)
+    (let [output (if (not= nil args)
+                   ((first args) input)
+                   [input])]
+      (nnode tag output))
+    nil))
 
 ;; atoms
 
-(defn -atom [token]
-  (def nodes (matched-nodes token atom-types))
-  (if (> (count nodes) 0)
-    (first nodes) ;; return first match
-    (throw (Exception. (str "Could not identify: " token)))))
-
-(defn -nl [token]
-  (if (is-type :nl token)
-    (nnode :nl [token])
-    nil))
-
+(defn -nl [token] (pattern token :nl :nl))
 (defn -is [token]
-  (if (is-type #"is" token)
-    (nnode :is [:is])
-    nil))
+  (pattern token #"is" :is (fn [x] [:is])))
 
 ;; values
 
 (defn -value [token]
-  (def nodes (matched-nodes token value-types))
+  (def nodes (alternatives token [-string -integer -identifier]))
   (if (> (count nodes) 0)
     (nnode :value [(first nodes)])
     nil))
 
-(defn -assignee [token]
-  (if (is-type #"[A-Za-z]+" token)
-    (nnode :assignee [token])
-    nil))
-
-(defn -identifier [token]
-  (if (is-type #"(?!^is$)[A-Za-z]+" token)
-    (nnode :identifier [token])
-    nil))
-
+(defn -assignee [token] (pattern token #"[A-Za-z]+" :assignee))
+(defn -identifier [token] (pattern token #"(?!^is$)[A-Za-z]+" :identifier))
 (defn -integer [token]
-  (if (is-type #"[0-9]+" token)
-    (nnode :integer [(Integer/parseInt token)])
-    nil))
+  (pattern token #"[0-9]+" :integer (fn [x] [(Integer/parseInt token)])))
 
 (defn -string [token]
-  (if (is-type #"'[A-Za-z0-9 ]+'" token)
-    (nnode :string [(str/replace token "'" "")])
-    nil))
+  (pattern token #"'[A-Za-z0-9 ]+'" :string (fn [x] [(str/replace token "'" "")])))
 
-
-;; types
-
-(def expression-types [-assignment -invocation])
-(def atom-types [-nl])
-(def value-types [-string -integer -identifier])
