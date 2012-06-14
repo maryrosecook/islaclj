@@ -29,15 +29,17 @@
     {:expr nil :left-tokens tokens})) ;; no expr match - return
 
 (defn -assignment [tokens]
-  (let [nodes (pattern-sequence tokens [-assignee -is -value -nl] [])]
-    (if (= (count nodes) 4)
-      {:expr (nnode :assignment (take 3 nodes)) :left-tokens (nthrest tokens 4)}
+  (let [{nodes :nodes left-tokens :left-tokens}
+        (pattern-sequence tokens [-assignee -is -value -nl] [])]
+    (if (not= nodes nil)
+      {:expr (nnode :assignment (take 3 nodes)) :left-tokens left-tokens}
       nil)))
 
 (defn -invocation [tokens]
-  (let [nodes (pattern-sequence tokens [-identifier -value -nl] [])]
-    (if (= (count nodes) 3)
-      {:expr (nnode :invocation (take 2 nodes)) :left-tokens (nthrest tokens 3)}
+  (let [{nodes :nodes left-tokens :left-tokens}
+        (pattern-sequence tokens [-identifier -value -nl] [])]
+    (if (not= nodes nil)
+      {:expr (nnode :invocation (take 2 nodes)) :left-tokens left-tokens}
       nil)))
 
 ;; atoms
@@ -85,12 +87,17 @@
                     types))))
 
 (defn pattern-sequence [tokens patterns collected]
-  (if (and (> (count patterns) 0) ;; still patterns to test
-           (>= (count tokens) (count patterns))) ;; enough tokens to satisfy pattern
-    (if-let [node ((first patterns) (first tokens))] ;; pattern matches token
-      (pattern-sequence (rest tokens) (rest patterns) (conj collected node))
-      collected)
-    collected))
+  ;; (if (and (> (count patterns) 0) ;; still patterns to test
+  ;; (>= (count tokens) (count patterns))) ;; enough tokens to satisfy pattern
+  (let [pattern (first patterns)
+        token (first tokens)]
+    (if (nil? pattern)
+      {:nodes collected :left-tokens tokens} ;; pattern matched - return
+      (if (nil? token) ;; pattern match failure - not enough tokens
+        {:nodes nil :left-tokens nil}
+        (if-let [node (pattern token)] ;; matched token
+          (pattern-sequence (rest tokens) (rest patterns) (conj collected node)) ;; round again
+          {:nodes nil :left-tokens nil}))))) ;; pattern match failure - return
 
 ;; only one token, for now
 (defn pattern [input matcher tag & args]
