@@ -3,7 +3,7 @@
   (:use [isla.lexer])
   (:require [clojure.string :as str]))
 
-(declare parse alternatives is-type pattern-sequence pattern
+(declare parse alternatives is-type pattern-sequence pattern nnode
          -root -block -expression -assignment -invocation
          -nl -integer -is -string -assignee -value -identifier)
 
