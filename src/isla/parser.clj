@@ -13,7 +13,7 @@
 (defn parse [code]
   (-root (lex code)))
 
-(defn matched-nodes [input types] ;; bit round the houses
+(defn alternatives [input types] ;; bit round the houses
   (vec (map (fn [t] (t input)) ;; get nodes for each matching type
             (filter (fn [t] (not= nil (t input))) ;; get matching types
                     types))))
@@ -43,7 +43,7 @@
 ;; expressions
 
 (defn -expression [tokens collected]
-  (def expressions (matched-nodes tokens expression-types)) ;; candidates
+  (def expressions (alternatives tokens [-assignment -invocation]))
   (if (> (count expressions) 0)
     (let [{expr :expr left-tokens :left-tokens} (first expressions)]
       {:expr (nnode :expression [expr]) :left-tokens left-tokens}) ;; return expr
@@ -90,7 +90,7 @@
 ;; values
 
 (defn -value [token]
-  (def nodes (matched-nodes token value-types))
+  (def nodes (alternatives token [-string -integer -identifier]))
   (if (> (count nodes) 0)
     (nnode :value [(first nodes)])
     nil))
