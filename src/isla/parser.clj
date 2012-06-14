@@ -3,7 +3,7 @@
   (:use [isla.lexer])
   (:require [clojure.string :as str]))
 
-(declare parse alternatives is-type pattern-sequence pattern nnode
+(declare parse alternatives is-type pattern-sequence pattern nnode pattern-sequence-selector
          -root -block -expression -assignment -invocation
          -nl -integer -is -string -assignee -value -identifier)
 
@@ -14,19 +14,15 @@
   (nnode :root [(-block tokens [])]))
 
 (defn -block [tokens collected]
-  (let [{expr :expr left-tokens :left-tokens} (-expression tokens [])]
-    (if (nil? expr)
-      (nnode :block collected) ;; no more exprs, return block
-      (-block left-tokens (conj collected expr))))) ;; add expr, continue collecting more
+  (if-let [{expr :expr left-tokens :left-tokens}
+           (-expression tokens [])]
+    (-block left-tokens (conj collected expr)) ;; add expr, continue collecting more
+    (nnode :block collected))) ;; no more exprs, return block
 
 ;; expressions
 
 (defn -expression [tokens collected]
-  (def expressions (alternatives tokens [-assignment -invocation]))
-  (if (> (count expressions) 0)
-    (let [{expr :expr left-tokens :left-tokens} (first expressions)]
-      {:expr (nnode :expression [expr]) :left-tokens left-tokens}) ;; return expr
-    {:expr nil :left-tokens tokens})) ;; no expr match - return
+  (pattern-sequence-selector tokens [-assignment -invocation]))
 
 (defn -assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
@@ -84,6 +80,13 @@
             (filter (fn [t] (not= nil (t input))) ;; get matching types
                     types))))
 
+(defn pattern-sequence-selector [tokens pattern-sequences]
+  (def alts (alternatives tokens pattern-sequences))
+  (if (> (count alts) 0)
+    (let [{expr :expr left-tokens :left-tokens} (first alts)]
+      {:expr (nnode :expression [expr]) :left-tokens left-tokens}) ;; return alternative
+    nil)) ;; no alternative match - return
+
 (defn pattern-sequence [tokens patterns collected]
   (let [pattern (first patterns)
         token (first tokens)]
@@ -93,7 +96,7 @@
         nil ;; pattern match failure - not enough tokens
         (if-let [node (pattern token)] ;; matched token
           (pattern-sequence (rest tokens) (rest patterns) (conj collected node)) ;; round again
-          nil))))) ;; pattern match failure - return
+          nil))))) ;; pattern match failure token match failure - return
 
 ;; only one token, for now
 (defn pattern [input matcher tag & args]
