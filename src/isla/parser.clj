@@ -8,7 +8,7 @@
 
 (declare expression-types atom-types value-types
          parse matched-nodes is-type pattern-sequence
-         -root -block -expression -atom -assignment
+         -root -block -expression -assignment -invocation
          -nl -integer -is -string -assignee -value -identifier)
 
 (defn parse [code]
@@ -77,11 +77,6 @@
 
 ;; atoms
 
-(defn -atom [token]
-  (def nodes (matched-nodes token atom-types))
-  (if (> (count nodes) 0)
-    (first nodes) ;; return first match
-    (throw (Exception. (str "Could not identify: " token)))))
 
 (defn -nl [token]
   (if (is-type :nl token)
