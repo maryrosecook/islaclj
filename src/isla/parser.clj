@@ -6,8 +6,7 @@
 (defn nnode [tag data]
   {:tag tag :content data})
 
-(declare expression-types atom-types value-types
-         parse matched-nodes is-type pattern-sequence
+(declare parse alternatives is-type pattern-sequence
          -root -block -expression -assignment -invocation
          -nl -integer -is -string -assignee -value -identifier)
 
@@ -119,6 +118,3 @@
 
 ;; types
 
-(def expression-types [-assignment -invocation])
-(def atom-types [-nl])
-(def value-types [-string -integer -identifier])
