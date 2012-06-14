@@ -15,7 +15,7 @@
 
 (defn -block [tokens collected]
   (let [{expr :expr left-tokens :left-tokens} (-expression tokens [])]
-    (if (= expr nil)
+    (if (nil? expr)
       (nnode :block collected) ;; no more exprs, return block
       (-block left-tokens (conj collected expr))))) ;; add expr, continue collecting more
 
