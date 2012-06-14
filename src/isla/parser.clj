@@ -51,23 +51,20 @@
     {:expr nil :left-tokens tokens})) ;; no expr match - return
 
 (defn -assignment [tokens]
-  (if (>= (count tokens) 4)
-    (let [nodes (pattern-sequence tokens [-assignee -is -value -nl] [])]
-      (if (= (count nodes) 4)
-        {:expr (nnode :assignment (take 3 nodes)) :left-tokens (nthrest tokens 4)}
-        nil))
-    nil))
+  (let [nodes (pattern-sequence tokens [-assignee -is -value -nl] [])]
+    (if (= (count nodes) 4)
+      {:expr (nnode :assignment (take 3 nodes)) :left-tokens (nthrest tokens 4)}
+      nil)))
 
 (defn -invocation [tokens]
-  (if (>= (count tokens) 3)
-    (let [nodes (pattern-sequence tokens [-identifier -value -nl] [])]
-      (if (= (count nodes) 3)
-        {:expr (nnode :invocation (take 2 nodes)) :left-tokens (nthrest tokens 3)}
-        nil))
-    nil))
+  (let [nodes (pattern-sequence tokens [-identifier -value -nl] [])]
+    (if (= (count nodes) 3)
+      {:expr (nnode :invocation (take 2 nodes)) :left-tokens (nthrest tokens 3)}
+      nil)))
 
 (defn pattern-sequence [tokens patterns collected]
-  (if (> (count patterns) 0) ;; still patterns to test
+  (if (and (> (count patterns) 0) ;; still patterns to test
+           (>= (count tokens) (count patterns))) ;; enough tokens to satisfy pattern
     (if-let [node ((first patterns) (first tokens))] ;; pattern matches token
       (pattern-sequence (rest tokens) (rest patterns) (conj collected node))
       collected)
