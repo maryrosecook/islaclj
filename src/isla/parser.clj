@@ -69,23 +69,20 @@
       collected)
     collected))
 
-
-
-
-
+;; only one token, for now
+(defn pattern [input matcher tag & args]
+  (if (is-type matcher input)
+    (let [output (if (not= nil args)
+                   ((first args) input)
+                   [input])]
+      (nnode tag output))
+    nil))
 
 ;; atoms
 
-
-(defn -nl [token]
-  (if (is-type :nl token)
-    (nnode :nl [token])
-    nil))
-
+(defn -nl [token] (pattern token :nl :nl))
 (defn -is [token]
-  (if (is-type #"is" token)
-    (nnode :is [:is])
-    nil))
+  (pattern token #"is" :is (fn [x] [:is])))
 
 ;; values
 
@@ -95,26 +92,11 @@
     (nnode :value [(first nodes)])
     nil))
 
-(defn -assignee [token]
-  (if (is-type #"[A-Za-z]+" token)
-    (nnode :assignee [token])
-    nil))
-
-(defn -identifier [token]
-  (if (is-type #"(?!^is$)[A-Za-z]+" token)
-    (nnode :identifier [token])
-    nil))
-
+(defn -assignee [token] (pattern token #"[A-Za-z]+" :assignee))
+(defn -identifier [token] (pattern token #"(?!^is$)[A-Za-z]+" :identifier))
 (defn -integer [token]
-  (if (is-type #"[0-9]+" token)
-    (nnode :integer [(Integer/parseInt token)])
-    nil))
+  (pattern token #"[0-9]+" :integer (fn [x] [(Integer/parseInt token)])))
 
 (defn -string [token]
-  (if (is-type #"'[A-Za-z0-9 ]+'" token)
-    (nnode :string [(str/replace token "'" "")])
-    nil))
-
-
-;; types
+  (pattern token #"'[A-Za-z0-9 ]+'" :string (fn [x] [(str/replace token "'" "")])))
 
