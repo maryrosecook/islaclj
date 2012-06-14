@@ -79,7 +79,7 @@
       true
       false)))
 
-(defn alternatives [input types] ;; bit round the houses
+(defn alternatives [input types]
   (vec (map (fn [t] (t input)) ;; get nodes for each matching type
             (filter (fn [t] (not= nil (t input))) ;; get matching types
                     types))))
