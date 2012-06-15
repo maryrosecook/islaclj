@@ -45,13 +45,8 @@
 
 ;; values
 
-;;;;;;;; might need attention - doesn't get back left-tokens
 (defn -value [tokens]
-  (def alts (alternatives tokens [-string -integer -identifier]))
-  (if (> (count alts) 0)
-    (let [{node :node left-tokens :left-tokens} (first alts)]
-      {:node (nnode :value [node]) :left-tokens left-tokens})
-    nil))
+  (pattern-sequence-selector tokens [-string -integer -identifier] :value))
 
 (defn -assignee [tokens] (pattern tokens #"[A-Za-z]+" :assignee))
 
