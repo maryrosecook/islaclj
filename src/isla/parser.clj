@@ -89,15 +89,11 @@
     nil)) ;; no alternatives match - return
 
 (defn pattern-sequence [tokens patterns collected]
-  (let [pattern (first patterns)
-        token (first tokens)] ;;;;;;;;;;;;;;;;; need to fix - sub patterns shd manage own toks
-    (if (nil? pattern)
-      {:nodes collected :left-tokens tokens} ;; pattern matched - return
-      (if (nil? token) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ditto
-        nil ;; pattern match failure - not enough tokens
-        (if-let [{node :node left-tokens :left-tokens} (pattern tokens)] ;; matched token
-          (pattern-sequence left-tokens (rest patterns) (conj collected node)) ;; round again
-          nil))))) ;; pattern match failure token match failure - return
+  (if-let [pattern (first patterns)]
+    (if-let [{node :node left-tokens :left-tokens} (pattern tokens)] ;; matched token
+      (pattern-sequence left-tokens (rest patterns) (conj collected node)) ;; round again
+      nil) ;; pattern sequence element match failure - return
+    {:nodes collected :left-tokens tokens})) ;; pattern matched - return
 
 (defn one-token-pattern [tokens matcher tag & args]
   (if-let [token (first tokens)]
