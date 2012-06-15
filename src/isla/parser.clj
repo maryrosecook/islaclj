@@ -3,7 +3,9 @@
   (:use [isla.lexer])
   (:require [clojure.string :as str]))
 
-(declare parse alternatives is-type pattern-sequence pattern nnode pattern-sequence-selector
+(declare parse nnode
+         alternatives is-type pattern-sequence pattern
+         pattern-sequence-selector one-token-pattern
          -root -block -expression -assignment -invocation
          -nl -integer -is -string -assignee -value -identifier)
 
@@ -38,26 +40,27 @@
 
 ;; atoms
 
-(defn -nl [tokens] (pattern tokens :nl :nl))
+(defn -nl [tokens] (one-token-pattern tokens :nl :nl))
 
 (defn -is [tokens]
-  (pattern tokens #"is" :is (fn [x] [:is])))
+  (one-token-pattern tokens #"is" :is (fn [x] [:is])))
 
 ;; values
 
 (defn -value [tokens]
   (pattern-sequence-selector tokens [-string -integer -identifier] :value))
 
-(defn -assignee [tokens] (pattern tokens #"[A-Za-z]+" :assignee))
+(defn -assignee [tokens] (one-token-pattern tokens #"[A-Za-z]+" :assignee))
 
-(defn -identifier [tokens] (pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
+(defn -identifier [tokens] (one-token-pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
 
 (defn -integer [tokens]
   (if (is-type #"[0-9]+" (first tokens))
     {:node (nnode :integer [(Integer/parseInt (first tokens))]) :left-tokens (rest tokens)}))
 
 (defn -string [tokens]
-  (pattern tokens #"'[A-Za-z0-9 ]+'" :string (fn [x] [(str/replace (first tokens) "'" "")])))
+  (one-token-pattern tokens #"'[A-Za-z0-9 ]+'" :string
+                     (fn [x] [(str/replace (first tokens) "'" "")])))
 
 ;; helpers
 
@@ -96,7 +99,7 @@
           (pattern-sequence left-tokens (rest patterns) (conj collected node)) ;; round again
           nil))))) ;; pattern match failure token match failure - return
 
-(defn pattern [tokens matcher tag & args]
+(defn one-token-pattern [tokens matcher tag & args]
   (if (is-type matcher (first tokens))
     (let [output (if (not= nil args)
                    ((first args) (first tokens))
