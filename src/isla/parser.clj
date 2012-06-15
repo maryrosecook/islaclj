@@ -72,7 +72,7 @@
   (= symbol token))
 
 (defmethod is-type java.util.regex.Pattern [re token]
-  (if (keyword? token)
+  (if (keyword? token) ;; looking for string but potential is kw so not a match
     false
     (if (not= nil (re-matches re token))
       true
