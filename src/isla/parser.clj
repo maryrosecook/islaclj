@@ -58,7 +58,8 @@
 (defn -identifier [tokens] (pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
 
 (defn -integer [tokens]
-  (pattern tokens #"[0-9]+" :integer (fn [x] [(Integer/parseInt (first tokens))])))
+  (if (is-type #"[0-9]+" (first tokens))
+    {:node (nnode :integer [(Integer/parseInt (first tokens))]) :left-tokens (rest tokens)}))
 
 (defn -string [tokens]
   (pattern tokens #"'[A-Za-z0-9 ]+'" :string (fn [x] [(str/replace (first tokens) "'" "")])))
