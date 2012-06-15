@@ -100,11 +100,13 @@
           nil))))) ;; pattern match failure token match failure - return
 
 (defn one-token-pattern [tokens matcher tag & args]
-  (if (is-type matcher (first tokens))
-    (let [output (if (not= nil args)
-                   ((first args) (first tokens))
-                   [(first tokens)])]
-      {:node (nnode tag output) :left-tokens (rest tokens)})
+  (if-let [token (first tokens)]
+    (if (is-type matcher token)
+      (let [output (if (not= nil args)
+                     ((first args) token)
+                     [token])]
+        {:node (nnode tag output) :left-tokens (rest tokens)})
+      nil)
     nil))
 
 (defn nnode [tag data]
