@@ -14,9 +14,9 @@
   (nnode :root [(-block tokens [])]))
 
 (defn -block [tokens collected]
-  (if-let [{expr :expr left-tokens :left-tokens}
+  (if-let [{node :node left-tokens :left-tokens}
            (-expression tokens [])]
-    (-block left-tokens (conj collected expr)) ;; add expr, continue collecting more
+    (-block left-tokens (conj collected node)) ;; add expr, continue collecting more
     (nnode :block collected))) ;; no more exprs, return block
 
 ;; expressions
@@ -27,13 +27,13 @@
 (defn -assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
            (pattern-sequence tokens [-assignee -is -value -nl] [])]
-    {:expr (nnode :assignment (take 3 nodes)) :left-tokens left-tokens}
+    {:node (nnode :assignment (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
 (defn -invocation [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
            (pattern-sequence tokens [-identifier -value -nl] [])]
-    {:expr (nnode :invocation (take 2 nodes)) :left-tokens left-tokens}
+    {:node (nnode :invocation (take 2 nodes)) :left-tokens left-tokens}
     nil))
 
 ;; atoms
@@ -86,8 +86,8 @@
 (defn pattern-sequence-selector [tokens pattern-sequences]
   (def alts (alternatives tokens pattern-sequences))
   (if (> (count alts) 0)
-    (let [{expr :expr left-tokens :left-tokens} (first alts)]
-      {:expr (nnode :expression [expr]) :left-tokens left-tokens}) ;; return alternative
+    (let [{node :node left-tokens :left-tokens} (first alts)]
+      {:node (nnode :expression [node]) :left-tokens left-tokens}) ;; return alternative
     nil)) ;; no alternatives match - return
 
 (defn pattern-sequence [tokens patterns collected]
