@@ -38,32 +38,34 @@
 
 ;; atoms
 
-(defn -nl [token] (pattern token :nl :nl))
+(defn -nl [tokens] (pattern tokens :nl :nl))
 
-(defn -is [token]
-  (pattern token #"is" :is (fn [x] [:is])))
+(defn -is [tokens]
+  (pattern tokens #"is" :is (fn [x] [:is])))
 
 ;; values
 
-(defn -value [token]
-  (def nodes (alternatives token [-string -integer -identifier]))
-  (if (> (count nodes) 0)
-    (nnode :value [(first nodes)])
+;;;;;;;; might need attention - doesn't get back left-tokens
+(defn -value [tokens]
+  (def alts (alternatives tokens [-string -integer -identifier]))
+  (if (> (count alts) 0)
+    (let [{node :node left-tokens :left-tokens} (first alts)]
+      {:node (nnode :value [node]) :left-tokens left-tokens})
     nil))
 
-(defn -assignee [token] (pattern token #"[A-Za-z]+" :assignee))
+(defn -assignee [tokens] (pattern tokens #"[A-Za-z]+" :assignee))
 
-(defn -identifier [token] (pattern token #"(?!^is$)[A-Za-z]+" :identifier))
+(defn -identifier [tokens] (pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
 
-(defn -integer [token]
-  (pattern token #"[0-9]+" :integer (fn [x] [(Integer/parseInt token)])))
+(defn -integer [tokens]
+  (pattern tokens #"[0-9]+" :integer (fn [x] [(Integer/parseInt (first tokens))])))
 
-(defn -string [token]
-  (pattern token #"'[A-Za-z0-9 ]+'" :string (fn [x] [(str/replace token "'" "")])))
+(defn -string [tokens]
+  (pattern tokens #"'[A-Za-z0-9 ]+'" :string (fn [x] [(str/replace (first tokens) "'" "")])))
 
 ;; helpers
 
-(defmulti is-type (fn [matcher token] (class matcher)))
+(defmulti is-type (fn [matcher tokens] (class matcher)))
 
 (defmethod is-type clojure.lang.Keyword [symbol token]
   (= symbol token))
@@ -85,26 +87,25 @@
   (if (> (count alts) 0)
     (let [{expr :expr left-tokens :left-tokens} (first alts)]
       {:expr (nnode :expression [expr]) :left-tokens left-tokens}) ;; return alternative
-    nil)) ;; no alternative match - return
+    nil)) ;; no alternatives match - return
 
 (defn pattern-sequence [tokens patterns collected]
   (let [pattern (first patterns)
-        token (first tokens)]
+        token (first tokens)] ;;;;;;;;;;;;;;;;; need to fix - sub patterns shd manage own toks
     (if (nil? pattern)
       {:nodes collected :left-tokens tokens} ;; pattern matched - return
-      (if (nil? token)
+      (if (nil? token) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ditto
         nil ;; pattern match failure - not enough tokens
-        (if-let [node (pattern token)] ;; matched token
-          (pattern-sequence (rest tokens) (rest patterns) (conj collected node)) ;; round again
+        (if-let [{node :node left-tokens :left-tokens} (pattern tokens)] ;; matched token
+          (pattern-sequence left-tokens (rest patterns) (conj collected node)) ;; round again
           nil))))) ;; pattern match failure token match failure - return
 
-;; only one token, for now
-(defn pattern [input matcher tag & args]
-  (if (is-type matcher input)
+(defn pattern [tokens matcher tag & args]
+  (if (is-type matcher (first tokens))
     (let [output (if (not= nil args)
-                   ((first args) input)
-                   [input])]
-      (nnode tag output))
+                   ((first args) (first tokens))
+                   [(first tokens)])]
+      {:node (nnode tag output) :left-tokens (rest tokens)})
     nil))
 
 (defn nnode [tag data]
