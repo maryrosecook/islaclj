@@ -22,7 +22,7 @@
 ;; expressions
 
 (defn -expression [tokens collected]
-  (pattern-sequence-selector tokens [-assignment -invocation]))
+  (pattern-sequence-selector tokens [-assignment -invocation] :expression))
 
 (defn -assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
@@ -83,11 +83,11 @@
             (filter (fn [t] (not= nil (t input))) ;; get matching types
                     types))))
 
-(defn pattern-sequence-selector [tokens pattern-sequences]
+(defn pattern-sequence-selector [tokens pattern-sequences tag]
   (def alts (alternatives tokens pattern-sequences))
   (if (> (count alts) 0)
     (let [{node :node left-tokens :left-tokens} (first alts)]
-      {:node (nnode :expression [node]) :left-tokens left-tokens}) ;; return alternative
+      {:node (nnode tag [node]) :left-tokens left-tokens}) ;; return alternative
     nil)) ;; no alternatives match - return
 
 (defn pattern-sequence [tokens patterns collected]
