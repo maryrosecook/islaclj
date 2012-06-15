@@ -6,8 +6,8 @@
 (declare parse nnode
          alternatives is-type pattern-sequence pattern
          pattern-sequence-selector one-token-pattern
-         -root -block -expression -assignment -invocation
-         -nl -integer -is -string -assignee -value -identifier)
+         -root -block -expression -type-assignment -assignment -invocation
+         -nl -integer -is-a -is -string -assignee -value -identifier)
 
 (defn parse [code]
   (-root (lex code)))
@@ -24,7 +24,13 @@
 ;; expressions
 
 (defn -expression [tokens collected]
-  (pattern-sequence-selector tokens [-assignment -invocation] :expression))
+  (pattern-sequence-selector tokens [-type-assignment -assignment -invocation] :expression))
+
+(defn -type-assignment [tokens]
+  (if-let [{nodes :nodes left-tokens :left-tokens}
+           (pattern-sequence tokens [-assignee -is-a -identifier -nl] [])]
+    {:node (nnode :assignment (take 3 nodes)) :left-tokens left-tokens}
+    nil))
 
 (defn -assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
@@ -39,6 +45,12 @@
     nil))
 
 ;; atoms
+
+(defn -is-a [tokens]
+  (let [one (first tokens) two (second tokens)]
+    (if (and (string? one) (string? two))
+      (if (is-type #"is a" (str one " " two))
+        {:node (nnode :is-a [:is-a]) :left-tokens (nthrest tokens 2)}))))
 
 (defn -nl [tokens] (one-token-pattern tokens :nl :nl))
 

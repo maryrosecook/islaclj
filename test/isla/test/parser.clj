@@ -25,6 +25,15 @@
 
 ;; assignment
 
+(deftest type-assignment
+  (check-ast (parse "mary is a girl")
+             {:root [{:block [{:expression
+                               [{:assignment
+                                 [{:assignee ["mary"]}
+                                  {:is-a [:is-a]}
+                                  {:identifier ["girl"]}]}]}]}]}))
+
+
 (deftest assignment-number
   (check-ast (parse "mary is 1")
              {:root [{:block [{:expression
@@ -78,6 +87,25 @@
                                [{:invocation
                                  [{:identifier ["write"]}
                                   {:value [{:string ["la"]}]}]}]}
+                              {:expression
+                               [{:invocation
+                                 [{:identifier ["write"]}
+                                  {:value [{:identifier ["name"]}]}]}]}
+                              ]}]}))
+
+
+(deftest test-block-with-type-ass-and-value-ass
+  (check-ast (parse "name is 'Isla'\nmary is a girl\nwrite name")
+             {:root [{:block [{:expression
+                               [{:assignment
+                                 [{:assignee ["name"]}
+                                  {:is [:is]}
+                                  {:value [{:string ["Isla"]}]}]}]}
+                              {:expression
+                               [{:assignment
+                                 [{:assignee ["mary"]}
+                                  {:is-a [:is-a]}
+                                  {:identifier ["girl"]}]}]}
                               {:expression
                                [{:invocation
                                  [{:identifier ["write"]}
