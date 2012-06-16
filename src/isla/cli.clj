@@ -36,7 +36,7 @@
   Which story would you like?\n")))
 
 
-(defn start-repl []
+(defn -main [& args]
   (def repl-context (ref (library/get-initial-context)))
 
   (println)
