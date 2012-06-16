@@ -7,8 +7,11 @@
 
 (defmulti interpret (fn [& args] (:tag (first args))))
 
-(defmethod interpret :root [node]
-  (run-sequence (:content node) (get-initial-context)))
+(defmethod interpret :root [node & args]
+  (let [content (:content node)]
+    (if (not= nil args)
+      (run-sequence content (first args))
+      (run-sequence content (get-initial-context)))))
 
 (defmethod interpret :block [node context]
   (run-sequence (:content node) context))
