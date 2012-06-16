@@ -2,9 +2,12 @@
   (:use [isla.parser])
   (:use [isla.interpreter])
   (:require [isla.utils :as utils])
+  (:require [isla.library :as library])
   (:use [clojure.pprint])
   (:import java.io.File)
   (:require [clojure.string :as str]))
+
+(declare repl)
 
 (def story-dir "stories/")
 
@@ -33,11 +36,32 @@
   Which story would you like?\n")))
 
 
-(defn -main [& args]
-  (introduction)
+(defn start-repl []
+  (def repl-context (ref (library/get-initial-context)))
 
-  (run-story (utils/take-input))
-  ;; (def first-story (first (str/split (.getName (first (get-stories))) #"\.")))
-  ;; (run-story first-story)
+  (println)
+  (utils/output "-------------------------------------------------------\n")
+  (utils/output "Hello. My name is Isla. It's terribly nice to meet you.\n")
+
+  (repl)
 
   (flush)) ;; empty return to stop last thing executed from being printed to console
+
+
+
+(defn run [code]
+  (dosync (ref-set repl-context (interpret (parse code) (deref repl-context)))))
+
+(defn repl []
+  (run (utils/take-input))
+  (repl))
+
+;; (defn -main [& args]
+;;   (introduction)
+
+;;   (run-story (utils/take-input))
+;;   ;; (def first-story (first (str/split (.getName (first (get-stories))) #"\.")))
+;;   ;; (run-story first-story)
+
+;;   (flush)) ;; empty return to stop last thing executed from being printed to console
+
