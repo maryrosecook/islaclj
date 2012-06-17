@@ -15,7 +15,7 @@
 
 (declare run repl)
 
-(def repl-context (ref (library/get-initial-context)))
+(def repl-env (ref (library/get-initial-env)))
 
 (defn eval-string [isla-expr]
   ;; (throw (Exception. (str form)))
@@ -33,12 +33,11 @@
 
 
 (defn run [code]
-  (println (first (:content (first (:content (isla.parser/parse code))))))
   (let [return
         (interpret (first (:content (first (:content (isla.parser/parse code)))))
-                   (deref repl-context))]
+                   (deref repl-env))]
     (println return)
-    (dosync (ref-set repl-context (:ctx return)))
+    (dosync (ref-set repl-env return))
     (:ret return)))
 
 (defn repl []
