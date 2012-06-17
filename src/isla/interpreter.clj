@@ -30,8 +30,8 @@
   (def content (vec (:content node)))
   (def function (lookup (interpret (first content) context) context))
   (def param (interpret (nth content 1) context))
-  (function context param)
-  context) ;; call fn
+  (let [return-val (function context param)] ;; call fn
+    (nreturn context return-val)))
 
 (defmethod interpret :value [node context]
   (if (= :identifier (:tag (first-content node)))
