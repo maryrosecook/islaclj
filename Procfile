@@ -1,1 +1,1 @@
-web: lein trampoline run -m isla.cli $PORT
+web: lein trampoline run -m tryclojure.server $PORT
