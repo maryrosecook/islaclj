@@ -38,9 +38,3 @@
 
 (defpage "/home" []
   (home-html))
-
-(defpage "/about" []
-  (about-html))
-
-(defpage "/links" []
-  (links))
