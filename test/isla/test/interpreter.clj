@@ -7,10 +7,21 @@
 
 (deftest integer-assignment
   (let [result (interpret (parse "isla is 1"))]
-    (is (= (get result "isla")
+    (is (= (get (:ctx result) "isla")
            1))))
 
-;; (deftest test-write-out
-;;   (let [result (interpret (parse "write 1"))]
-;;     (is (= (:return result)
-;;            1))))
+(deftest test-single-invoke-returns-return-value
+  (let [result (interpret (parse "write 2"))]
+    (is (= (:ret result) 2))))
+
+(deftest test-next-expression-overwrites-ret-of-previous
+  (let [result (interpret (parse "write 2\nwrite 3"))]
+    (is (= (:ret result) 3))))
+
+(deftest test-second-not-returning-expression-removes-ret-value-of-prev
+  (let [result (interpret (parse "write 2"))]
+    (is (= (:ret result) 2)) ;; check first would have ret val
+
+    ;; run test
+    (let [result (interpret (parse "write 2\nage is 1"))]
+    (is (nil? (:ret result))))))
