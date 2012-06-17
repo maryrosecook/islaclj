@@ -24,7 +24,7 @@
   (def identifier (interpret (first content) context))
   (def value (interpret (nth content 2) context))
   (let [new-context (conj context [identifier value])]
-    new-context))
+    (nreturn new-context)))
 
 (defmethod interpret :invocation [node context]
   (def content (vec (:content node)))
