@@ -52,8 +52,8 @@
 
 
 (defn nreturn
-  ([context] {:context context :return nil})
-  ([context return] {:context context :return return}))
+  ([context] {:ctx context :ret nil})
+  ([context return] {:ctx context :ret return}))
 
 (defn lookup [identifier context]
   (get context identifier))
