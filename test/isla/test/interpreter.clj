@@ -25,3 +25,7 @@
     ;; run test
     (let [result (interpret (parse "write 2\nage is 1"))]
     (is (nil? (:ret result))))))
+
+(deftest test-write-assigned-value
+  (let [result (interpret (parse "name is 'mary'\nwrite name"))]
+    (is (= (:ret result) "mary"))))
