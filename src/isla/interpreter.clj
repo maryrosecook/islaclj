@@ -19,6 +19,16 @@
 (defmethod interpret :expression [node env]
   (interpret (first (:content node)) env))
 
+(defmethod interpret :slot-assignment [node env]
+  (let [content (:content node)
+        assignee (interpret (first content) env)
+        slot (keyword (interpret (second content) env))
+        value (interpret (nth content 3) env)]
+    (let [new-ctx (assoc (:ctx env)
+                    assignee
+                    (assoc (get (:ctx env) assignee) slot value))]
+      (nreturn new-ctx))))
+
 (defmethod interpret :type-assignment [node env]
   (let [content (:content node)
         identifier (interpret (first content) env)

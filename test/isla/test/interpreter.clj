@@ -31,13 +31,25 @@
   (let [result (interpret (parse "name is 'mary'\nwrite name"))]
     (is (= (:ret result) "mary"))))
 
-(deftest test-type-assignment
-  (def extra-types
-    {"thingy"
-     {:type (defrecord Thingy [x])
-      :defaults [nil]}})
+(def extra-types
+  {"person"
+   {:type (defrecord Person [age name])
+    :defaults [0 ""]}})
 
-  (let [result (interpret (parse "thing is a thingy")
+(deftest test-type-assignment
+  (let [result (interpret (parse "isla is a person")
                           (library/get-initial-env extra-types))]
-    (is (= (get (:ctx result) "thing")
-           (new isla.test.interpreter.Thingy nil)))))
+    (is (= (get (:ctx result) "isla")
+           (new isla.test.interpreter.Person 0 "")))))
+
+(deftest test-slot-assignment
+  (let [result (interpret (parse "isla is a person\nisla age is 1")
+                          (library/get-initial-env extra-types))]
+    (is (= (get (:ctx result) "isla")
+           (new isla.test.interpreter.Person 1 "")))))
+
+(deftest test-slot-assignment-retention-of-other-slot-values
+  (let [result (interpret (parse "isla is a person\nisla name is 'isla'\nisla age is 1")
+                          (library/get-initial-env extra-types))]
+    (is (= (get (:ctx result) "isla")
+           (new isla.test.interpreter.Person 1 "isla")))))
