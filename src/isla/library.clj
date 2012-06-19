@@ -9,11 +9,15 @@
   {
    :ret nil
    :ctx {
+         ;; fns
          "write" (fn [env str]
                    (utils/output str) ;; print out
                    str) ;; add to context
+
+
+         ;; types
+         :types (if (nil? extra-types)
+                  user/types
+                  (merge extra-types user/types))
          }
-   :types (if (nil? extra-types)
-            user/types
-            (merge extra-types user/types))
   })

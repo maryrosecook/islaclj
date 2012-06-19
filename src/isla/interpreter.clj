@@ -23,7 +23,7 @@
   (let [content (:content node)
         identifier (interpret (first content) env)
         type-identifier (interpret (nth content 2) env)
-        type-hash (get (:types env) type-identifier)]
+        type-hash (get (:types (:ctx env)) type-identifier)]
     (let [new-ctx (assoc (:ctx env)
                     identifier
                     (clojure.lang.Reflector/invokeConstructor
