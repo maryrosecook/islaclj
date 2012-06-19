@@ -28,7 +28,7 @@
 (deftest type-assignment
   (check-ast (parse "mary is a girl")
              {:root [{:block [{:expression
-                               [{:assignment
+                               [{:type-assignment
                                  [{:assignee ["mary"]}
                                   {:is-a [:is-a]}
                                   {:identifier ["girl"]}]}]}]}]}))
@@ -102,7 +102,7 @@
                                   {:is [:is]}
                                   {:value [{:string ["Isla"]}]}]}]}
                               {:expression
-                               [{:assignment
+                               [{:type-assignment
                                  [{:assignee ["mary"]}
                                   {:is-a [:is-a]}
                                   {:identifier ["girl"]}]}]}

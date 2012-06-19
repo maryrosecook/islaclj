@@ -29,7 +29,7 @@
 (defn -type-assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
            (pattern-sequence tokens [-assignee -is-a -identifier -nl] [])]
-    {:node (nnode :assignment (take 3 nodes)) :left-tokens left-tokens}
+    {:node (nnode :type-assignment (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
 (defn -assignment [tokens]
