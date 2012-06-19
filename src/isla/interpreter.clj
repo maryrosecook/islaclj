@@ -50,7 +50,6 @@
 (defmethod interpret :string [node _]
   (str/replace (first-content node) "'" ""))
 
-
 (defn nreturn
   ([ctx] {:ctx ctx :ret nil})
   ([ctx return] {:ctx ctx :ret return}))

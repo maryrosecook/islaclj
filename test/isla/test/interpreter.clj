@@ -4,7 +4,6 @@
   (:use [clojure.test])
   (:use [clojure.pprint]))
 
-
 (deftest integer-assignment
   (let [result (interpret (parse "isla is 1"))]
     (is (= (get (:ctx result) "isla")
