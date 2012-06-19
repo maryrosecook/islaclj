@@ -1,6 +1,8 @@
 (ns isla.test.interpreter
   (:use [isla.interpreter])
   (:use [isla.parser])
+  (:use [isla.user])
+  (:require [isla.library :as library])
   (:use [clojure.test])
   (:use [clojure.pprint]))
 
@@ -28,3 +30,14 @@
 (deftest test-write-assigned-value
   (let [result (interpret (parse "name is 'mary'\nwrite name"))]
     (is (= (:ret result) "mary"))))
+
+(deftest test-type-assignment
+  (def extra-types
+    {"thingy"
+     {:type (defrecord Thingy [x])
+      :defaults [nil]}})
+
+  (let [result (interpret (parse "thing is a thingy")
+                          (library/get-initial-env extra-types))]
+    (is (= (get (:ctx result) "thing")
+           (new isla.test.interpreter.Thingy nil)))))

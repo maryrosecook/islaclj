@@ -19,6 +19,18 @@
 (defmethod interpret :expression [node env]
   (interpret (first (:content node)) env))
 
+(defmethod interpret :type-assignment [node env]
+  (let [content (:content node)
+        identifier (interpret (first content) env)
+        type-identifier (interpret (nth content 2) env)
+        type-hash (get (:types env) type-identifier)]
+    (let [new-ctx (assoc (:ctx env)
+                    identifier
+                    (clojure.lang.Reflector/invokeConstructor
+                     (:type type-hash) ;; the actual defrecord
+                     (to-array (:defaults type-hash))))] ;; default params vector
+      (nreturn new-ctx))))
+
 (defmethod interpret :assignment [node env]
   (def content (:content node))
   (def identifier (interpret (first content) env))
