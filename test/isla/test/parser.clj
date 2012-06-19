@@ -23,7 +23,23 @@
 (deftest nnode-create
   (is (= (nnode :integer [1]) {:tag :integer :content [1]})))
 
-;; assignment
+;; slot assignment
+
+(deftest slot-assignment
+  (check-ast (parse "isla is a person\nisla age is 1")
+             {:root [{:block [{:expression
+                               [{:type-assignment
+                                 [{:assignee ["isla"]}
+                                  {:is-a [:is-a]}
+                                  {:identifier ["person"]}]}]}
+                              {:expression
+                               [{:slot-assignment
+                                 [{:assignee ["isla"]}
+                                  {:identifier ["age"]}
+                                  {:is [:is]}
+                                  {:value [{:integer [1]}]}]}]}]}]}))
+
+;; type assignment
 
 (deftest type-assignment
   (check-ast (parse "mary is a girl")
@@ -33,6 +49,7 @@
                                   {:is-a [:is-a]}
                                   {:identifier ["girl"]}]}]}]}]}))
 
+;; assignment to primitive variable
 
 (deftest assignment-number
   (check-ast (parse "mary is 1")

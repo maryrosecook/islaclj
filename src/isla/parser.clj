@@ -6,7 +6,7 @@
 (declare parse nnode
          alternatives is-type pattern-sequence pattern
          pattern-sequence-selector one-token-pattern
-         -root -block -expression -type-assignment -assignment -invocation
+         -root -block -expression -slot-assignment -type-assignment -assignment -invocation
          -nl -integer -is-a -is -string -assignee -value -identifier)
 
 (defn parse [code]
@@ -24,7 +24,15 @@
 ;; expressions
 
 (defn -expression [tokens collected]
-  (pattern-sequence-selector tokens [-type-assignment -assignment -invocation] :expression))
+  (pattern-sequence-selector tokens [-slot-assignment -type-assignment
+                                     -assignment -invocation]
+                             :expression))
+
+(defn -slot-assignment [tokens]
+  (if-let [{nodes :nodes left-tokens :left-tokens}
+           (pattern-sequence tokens [-assignee -identifier -is -value -nl] [])]
+    {:node (nnode :slot-assignment (take 4 nodes)) :left-tokens left-tokens}
+    nil))
 
 (defn -type-assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
