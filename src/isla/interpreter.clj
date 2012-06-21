@@ -3,7 +3,7 @@
   (:use [isla.library])
   (:require [clojure.string :as str]))
 
-(declare run-sequence first-content lookup nreturn)
+(declare run-sequence first-content lookup nreturn instantiate-type)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
 
@@ -84,6 +84,11 @@
 
 (defn first-content [node]
   (first (:content node)))
+
+(defn instantiate-type [type-hash]
+  (clojure.lang.Reflector/invokeConstructor
+   (:type type-hash)
+   (to-array (:defaults type-hash))))
 
 (defn run-sequence [nodes env]
   (if (empty? nodes)
