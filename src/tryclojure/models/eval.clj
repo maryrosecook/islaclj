@@ -7,6 +7,7 @@
   (:use [clojure.pprint])
   (:use [isla.parser])
   (:use [isla.interpreter])
+  (:require [isla.story :as story])
   (:require [isla.utils :as utils])
   (:require [isla.library :as library])
 
