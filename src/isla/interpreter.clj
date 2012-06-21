@@ -34,12 +34,10 @@
         identifier (interpret (first content) env)
         type-identifier (interpret (nth content 2) env)
         type-hash (get (:types (:ctx env)) type-identifier)]
-    (let [new-ctx (assoc (:ctx env)
-                    identifier
-                    (clojure.lang.Reflector/invokeConstructor
-                     (:type type-hash) ;; the actual defrecord
-                     (to-array (:defaults type-hash))))] ;; default params vector
-      (nreturn new-ctx))))
+    (if (nil? type-hash)
+      (throw (Exception. (str "I do not know what a " type-identifier " is.")))
+      (let [new-ctx (assoc (:ctx env) identifier (instantiate-type type-hash))]
+        (nreturn new-ctx)))))
 
 (defmethod interpret :assignment [node env]
   (def content (:content node))
