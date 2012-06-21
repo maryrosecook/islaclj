@@ -6,18 +6,25 @@
 
 (defn get-initial-env [& args]
   (def extra-types (first args))
+  (def initial-ctx (second args))
+
+  (def isla-ctx
+    {
+     ;; fns
+     "write" (fn [env str]
+               (utils/output str) ;; print out
+               str) ;; add to context
+
+
+     ;; types
+     :types (if (nil? extra-types)
+              user/types
+              (merge extra-types user/types))
+     })
+
+  ;; final env
   {
    :ret nil
-   :ctx {
-         ;; fns
-         "write" (fn [env str]
-                   (utils/output str) ;; print out
-                   str) ;; add to context
+   :ctx (merge isla-ctx initial-ctx)
+   })
 
-
-         ;; types
-         :types (if (nil? extra-types)
-                  user/types
-                  (merge extra-types user/types))
-         }
-  })
