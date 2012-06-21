@@ -36,11 +36,24 @@
    {:type (defrecord Person [age name])
     :defaults [0 ""]}})
 
+;; type assignment
+
 (deftest test-type-assignment
   (let [result (interpret (parse "isla is a person")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
            (new isla.test.interpreter.Person 0 "")))))
+
+
+(deftest test-unknown-type-causes-exception
+  (try
+    (interpret (parse "isla is a giraffe")
+               (library/get-initial-env extra-types))
+    (is false) ;; should not get called
+    (catch Exception e
+      (is (= (.getMessage e) "I do not know what a giraffe is.")))))
+
+;; slot assignment
 
 (deftest test-slot-assignment
   (let [result (interpret (parse "isla is a person\nisla age is 1")
