@@ -9,12 +9,16 @@
 (declare types name-into-objs extract-by-class get-story-ctx)
 
 (defprotocol Playable
-  (move [this direction]))
+  (move [this direction])
+  (look [this & object]))
 
 (defrecord Story [player rooms]
   Playable
   (move [this direction]
-    (println "move!")))
+    (println "move!"))
+  (look [this & object]
+    (println "look!")))
+
 
 (defrecord Monster [name description])
 (def monster-defaults ["" ""])
