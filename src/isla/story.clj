@@ -6,7 +6,7 @@
   (:require [isla.interpreter :as interpreter])
   (:require [isla.library :as library]))
 
-(declare types extract)
+(declare types name-into-objs extract-by-class get-story-ctx)
 
 (defprotocol Playable
   (move [this direction]))
@@ -31,17 +31,21 @@
              (library/get-initial-env types (get-story-ctx)))
         ctx (:ctx env)
 
-        rooms (extract ctx (:type (get types "room")))
-        player (first (extract ctx (:type (get types "_player"))))]
+        rooms (name-into-objs (extract-by-class ctx (:type (get types "room"))))
+        player (val (first (extract-by-class ctx (:type (get types "_player")))))]
 (defn get-story-ctx []
   {"my" (interpreter/instantiate-type (get types "_player"))})
 
     (Story. rooms player)))
+;; keys+vals -> vals
+(defn name-into-objs [objs]
+  (map (fn [x] (assoc (val x) :name (key x)))
+       objs))
 
-(defn extract [ctx clazz]
+(defn extract-by-class [ctx clazz]
   (filter
-   (fn [x] (= clazz (class x)))
-   (vals ctx)))
+   (fn [x] (= clazz (class (val x))))
+   ctx))
 
 (def types
   {
