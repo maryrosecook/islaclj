@@ -41,7 +41,7 @@ var controller;
 $(document).ready(function() {
     controller = $("#console").console({
         welcomeMessage:'',
-        promptLabel: 'isla> ',
+        promptLabel: '> ',
         commandValidate: onValidate,
         commandHandle: onHandle,
         autofocus:true,
