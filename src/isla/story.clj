@@ -11,7 +11,7 @@
 (defprotocol Playable
   (move [this direction]))
 
-(defrecord Story [rooms player]
+(defrecord Story [player rooms]
   Playable
   (move [this direction]
     (println "move!")))
@@ -33,10 +33,12 @@
 
         rooms (name-into-objs (extract-by-class ctx (:type (get types "room"))))
         player (val (first (extract-by-class ctx (:type (get types "_player")))))]
+
+    (Story. player rooms)))
+
 (defn get-story-ctx []
   {"my" (interpreter/instantiate-type (get types "_player"))})
 
-    (Story. rooms player)))
 ;; keys+vals -> vals
 (defn name-into-objs [objs]
   (map (fn [x] (assoc (val x) :name (key x)))
