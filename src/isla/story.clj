@@ -19,8 +19,8 @@
 (defrecord Monster [name description])
 (def monster-defaults ["" ""])
 
-(defrecord Player [name description])
-(def player-defaults ["" ""])
+(defrecord Player [name description current-room])
+(def player-defaults ["" "" 0])
 
 (defrecord Room [name description order objects])
 (def room-defaults ["" "" 0 []])
