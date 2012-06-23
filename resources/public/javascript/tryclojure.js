@@ -2,7 +2,12 @@ function eval_clojure(code) {
     var data;
     $.ajax({
         url: "eval.json",
-        data: { expr : code },
+        data: {
+          command: {
+            expr: code,
+            mode: mode
+          }
+        },
         async: false,
         success: function(res) { data = res; }
     });
