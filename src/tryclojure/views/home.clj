@@ -1,5 +1,6 @@
 (ns tryclojure.views.home
   (:require [noir.core :refer [defpartial defpage]]
+            [noir.response :refer [redirect]]
             [hiccup.element :refer [javascript-tag link-to unordered-list]]
             [hiccup.page :refer [include-css include-js html5]]))
 
@@ -34,7 +35,7 @@
         })();")]]]))
 
 (defpage "/" []
-  (root-html))
+  (redirect "/story"))
 
 (defpage "/story" []
   (root-html "story" "Story time with Isla"))
