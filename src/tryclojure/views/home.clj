@@ -36,6 +36,8 @@
 (defpage "/" []
   (root-html))
 
-(defpage "/home" []
-  (home-html))
+(defpage "/story" []
+  (root-html "story" "Story time with Isla"))
 
+(defpage "/code" []
+  (root-html "isla" "Try Isla"))
