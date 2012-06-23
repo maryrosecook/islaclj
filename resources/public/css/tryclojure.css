@@ -58,6 +58,8 @@ body {
   color:#0066FF;
   font-family:monospace;
   padding:0.1em;
+  padding-left: 16px;
+
 }
 #console div.jquery-console-prompt-box {
  color:#444; font-family:monospace;
