@@ -63,6 +63,12 @@
 
     (Story. player rooms)))
 
+(defn run-command [story command-str]
+  (let [command (first (str/split command-str #" "))
+        arguments-str (second (str/split command-str #" " 2))
+        arguments-vec (if (nil? arguments-str) [nil] [arguments-str])]
+    (clojure.lang.Reflector/invokeInstanceMethod story command (to-array arguments-vec))))
+
 (defn get-story-ctx []
   {"my" (interpreter/instantiate-type (get types "_player"))})
 
