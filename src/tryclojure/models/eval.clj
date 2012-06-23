@@ -44,9 +44,6 @@
     (dosync (ref-set isla-env return))
     (:ret return)))
 
-(defn repl []
-  (run (utils/take-input))
-  (repl))
 ;; story
 
 (defmulti run-story-command (fn [command expr] command))
