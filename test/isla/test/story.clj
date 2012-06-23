@@ -27,3 +27,13 @@
     (is (= (first (:rooms story))
            (assoc (isla.interpreter/instantiate-type (get types "room"))
              :name "palace" :description description)))))
+
+;; story telling
+
+(deftest test-look-general
+  (let [description "The floors are made of marble."
+        story-str (str "palace is a room
+                        palace description is '" description "'")
+        story (init-story story-str)]
+    (is (= (run-command story "look")
+           description))))
