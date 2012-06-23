@@ -8,7 +8,7 @@
   [:p.bottom
    ""])
 
-(defn root-html []
+(defn root-html [mode title]
   (html5
    [:head
     (include-css "/resources/public/css/tryclojure.css")
@@ -33,6 +33,7 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();")]]]))
+       (str "mode = '" mode "';"))]]]))
 
 (defpage "/" []
   (redirect "/story"))
