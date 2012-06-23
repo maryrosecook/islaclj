@@ -79,7 +79,7 @@
                      (fn [x] [(Integer/parseInt (first tokens))])))
 
 (defn -string [tokens]
-  (one-token-pattern tokens #"'[A-Za-z0-9 \.,]+'" :string
+  (one-token-pattern tokens #"'[A-Za-z0-9 \.,\\]+'" :string
                      (fn [x] [(str/replace (first tokens) "'" "")])))
 
 ;; helpers
