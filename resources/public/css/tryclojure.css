@@ -21,10 +21,8 @@ body {
  color:#444;
  margin: 0;
  padding: 0;
- margin-left: auto;
- margin-right: auto;
- width: 240px;
  padding-top:0;
+ text-align:center;
  font-family: monospace;
  font-weight: normal;
  font-size: 48px;
