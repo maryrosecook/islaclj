@@ -8,11 +8,28 @@
 
 (declare types name-into-objs extract-by-class get-story-ctx)
 
+(defprotocol Explorable
+  (get-current-room [this])
+  (get-all-items [this])
+  (get-item [this name]))
+
 (defprotocol Playable
   (move [this direction])
   (look [this & object]))
 
 (defrecord Story [player rooms]
+  Explorable
+  (get-current-room [this]
+    (first (filter (fn [x] (= (:order x) (:current-room player))) rooms)))
+  (get-all-items [this]
+    (concat (map (fn [x] (:items x)) rooms)))
+  (get-item [this name]
+    (if-let [item (first (filter (fn [y] (= name (:name y))) (get-all-items this)))]
+      item ;; item getter untested because didn't have items when wrote it
+      (if (> (.indexOf ["myself" "me"] name) -1)
+        player
+        nil)))
+
   Playable
   (move [this direction]
     (println "move!"))
