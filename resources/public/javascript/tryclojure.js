@@ -38,7 +38,10 @@ function onHandle(line, report) {
     }
 
     // display expr results
-    return [{msg: data.result, className: "jquery-console-message-value"}];
+    return [{
+      msg: data.result.replace(/"/g, ""),
+      className: "jquery-console-message-value"
+    }];
 }
 
 var controller;
