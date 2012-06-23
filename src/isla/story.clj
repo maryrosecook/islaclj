@@ -14,8 +14,8 @@
   (get-item [this name]))
 
 (defprotocol Playable
-  (move [this direction])
-  (look [this & object]))
+  ;; (move [this arguments])
+  (look [this arguments]))
 
 (defrecord Story [player rooms]
   Explorable
@@ -31,10 +31,16 @@
         nil)))
 
   Playable
-  (move [this direction]
-    (println "move!"))
-  (look [this & object]
-    (println "look!")))
+  ;; (move [this arguments]
+  ;;   (println "move!"))
+  (look [this arguments]
+    (if (nil? arguments)
+      (:description (get-current-room this))
+      (let [arguments-vec (str/split arguments #" ")]
+        (if (= "at" (first arguments-vec))
+          (if-let [item (get-item this (second arguments-vec))]
+            (:description item))
+          nil)))))
 
 
 (defrecord Monster [name description])
