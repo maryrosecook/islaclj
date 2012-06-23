@@ -26,7 +26,7 @@
 (defrecord Player [name description current-room])
 (def player-defaults ["" "" 0])
 
-(defrecord Room [name description order objects])
+(defrecord Room [name description order items])
 (def room-defaults ["" "" 0 []])
 
 (defn init-story [story-str]
