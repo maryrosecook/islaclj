@@ -11,12 +11,12 @@
     (include-js "http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"
                 "/resources/public/javascript/jquery-console/jquery.console.js"
                 "/resources/public/javascript/tryclojure.js")
-    [:title "Try Isla"]]
+    [:title title]]
    [:body
     [:div#wrapper
      [:div#content
       [:div#header
-       [:h1 "Try Isla"]]
+       [:h1 title]]
       [:div#container
        [:div#console.console]]
       (javascript-tag
