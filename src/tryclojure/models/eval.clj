@@ -7,38 +7,41 @@
   (:use [clojure.pprint])
   (:use [isla.parser])
   (:use [isla.interpreter])
+  (:require [clojure.string :as str])
   (:require [isla.story :as story])
   (:require [isla.utils :as utils])
   (:require [isla.library :as library])
 
+  (:import java.io.File)
   (:import java.io.StringWriter
 	   java.util.concurrent.TimeoutException))
 
-(declare run repl)
+(declare run-isla-code run-story-command eval-expr)
 
-(def repl-env (ref (library/get-initial-env)))
-
-(defn eval-string [isla-expr]
-  ;; (throw (Exception. (str form)))
-  (with-open [out (StringWriter.)]
-    {:expr isla-expr
-     :result [out (run isla-expr)]}))
-
-(defn eval-request [expr]
+(defn eval-request [{mode :mode expr :expr}]
   (try
-    (eval-string expr)
+    (with-open [out (StringWriter.)]
+      {:expr expr
+       :result [out (eval-expr mode expr)]})
     (catch TimeoutException _
-      {:error true :message "Execution Timed Out!"})
-    (catch Exception e
-      {:error true :message (str (root-cause e))})))
+      {:error true :message "Execution Timed Out!"})))
+    ;; (catch Exception e
+    ;;   {:error true :message (str (root-cause e))})))
 
 
-(defn run [code]
+(defmulti eval-expr (fn [mode _] mode))
+(defmethod eval-expr "isla" [_ expr] (run-isla-code expr))
+(defmethod eval-expr "story" [_ expr] (run-story-command (first (str/split expr #" ")) expr))
+
+;; isla
+
+(def isla-env (ref (library/get-initial-env)))
+
+(defn run-isla-code [code]
   (let [return
         (interpret (first (:content (first (:content (isla.parser/parse code)))))
-                   (deref repl-env))]
-    (println return)
-    (dosync (ref-set repl-env return))
+                   (deref isla-env))]
+    (dosync (ref-set isla-env return))
     (:ret return)))
 
 (defn repl []
