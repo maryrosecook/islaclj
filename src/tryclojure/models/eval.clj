@@ -44,3 +44,20 @@
 (defn repl []
   (run (utils/take-input))
   (repl))
+;; story
+
+(defmulti run-story-command (fn [command expr] command))
+
+(defmethod run-story-command "hear" [command expr]
+  (println command)
+  (println expr)
+  (if-let [story-name (second (str/split expr #" "))]
+    (let [file-path (str/lower-case (str "stories/" story-name ".is"))
+          story-str (slurp file-path)]
+      (println "wooot")
+      (def story (story/init-story story-str))
+      (println story)
+      (pprint story)
+      "Are you sitting comfortably? Then, we shall begin.")
+    (throw (Exception. "You must specify the name of the story you want to load."))))
+
