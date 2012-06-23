@@ -61,3 +61,9 @@
       "Are you sitting comfortably? Then, we shall begin.")
     (throw (Exception. "You must specify the name of the story you want to load."))))
 
+(defmethod run-story-command :default [command expr] ;; normal command
+  (if (nil? story)
+    (throw (Exception. "Type 'hear --story--' to begin."))
+    (story/run-command story expr)))
+
+;; utils
