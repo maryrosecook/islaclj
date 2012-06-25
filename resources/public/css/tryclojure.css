@@ -1,6 +1,8 @@
 body {
  background: #fff;
  text-align: center;
+ font-family:monospace;
+ color:#444;
 }
 
 #wrapper {
@@ -16,14 +18,11 @@ body {
 }
 
 #header h1 {
- /* height: 72px; */
- /* line-height: 72px; */
  color:#444;
  margin: 0;
  padding: 0;
  padding-top:0;
  text-align:center;
- font-family: monospace;
  font-weight: normal;
  font-size: 48px;
 }
@@ -37,6 +36,45 @@ body {
  color: #5881d8;
  display:inline
 }
+
+.prose-holder {
+  margin:10px;
+  border:1px solid #aaa;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.prose {
+  margin:10px;
+}
+
+.story {
+  background-color:#0C132E;
+  margin-left:-30px;
+}
+
+.story-code {
+  width:572px;
+  padding:20px 32px 20px 30px;
+  color: #fff;
+}
+
+.story-code .identifier { color:#fff; }
+.story-code .keyword { color:#FFE700; }
+.story-code .string { color:#2EDD36; }
+.story-code .type { color:#FF6E00; }
+
+.story-playthrough {
+  width:589px;
+  padding:20px 32px 20px 13px;
+  color: #fff;
+}
+
+.story-playthrough .command { color:#FFE700; }
+.story-playthrough .output {
+  padding:5px 0 5px 17px;
+}
+
 
 #console {
  height: 220px;
@@ -133,14 +171,6 @@ table.bottom {
  font-family: Arial, serif;
  font-size: 16px;
  color: #555;
-}
-
-#changer code {
-  background-color: #eee;
-  border: 1px solid #aaa;
-  color: #555;
-  font-family: courier, monospace;
-  padding: 0.1em 0.25em 0.1em 0.25em;
 }
 
 div#tuttext {
