@@ -83,6 +83,14 @@
 (defn first-content [node]
   (first (:content node)))
 
+(defn extract [ast route]
+  (if-let [nxt (first route)]
+    (let [unrolled-ast (if (seq? ast) (vec ast) ast)]
+      (if (contains? unrolled-ast nxt)
+        (extract (get unrolled-ast nxt) (rest route))
+        (thr ["AST " unrolled-ast " does not have " nxt])))
+    ast))
+
 (defn instantiate-type [type-hash]
   (clojure.lang.Reflector/invokeConstructor
    (:type type-hash)

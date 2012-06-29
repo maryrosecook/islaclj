@@ -66,3 +66,18 @@
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
            (new isla.test.interpreter.Person 1 "isla")))))
+;; test extract fn
+
+(deftest test-extract-block-tag
+  (let [ast (parse "isla is a person")]
+    (is (= (extract ast [:content 0 :tag]) :block))))
+
+(deftest test-extract-way-deep-assignee-scalar-name
+  (let [ast (parse "isla is a person")]
+    (is (= (extract ast [:content 0 :content 0 :content 0
+                         :content 0 :content 0 :content 0 :content 0]) "isla"))))
+
+(deftest test-extract-way-deep-identifier-tag
+  (let [ast (parse "isla is a person")]
+    (is (= (extract ast [:content 0 :content 0 :content 0
+                         :content 0 :content 0 :content 0 :tag]) :identifier))))
