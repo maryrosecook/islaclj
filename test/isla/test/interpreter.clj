@@ -66,6 +66,14 @@
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
            (new isla.test.interpreter.Person 1 "isla" :undefined)))))
+
+(deftest test-non-existent-slot-assignment
+  (try
+    (interpret (parse "isla is a person\nisla material is 'metal'")
+               (library/get-initial-env extra-types))
+    (is false) ;; shouldn't get called
+    (catch Exception e
+      (is (= (.getMessage e) "Persons do not have a material.")))))
 ;; test extract fn
 
 (deftest test-extract-block-tag
