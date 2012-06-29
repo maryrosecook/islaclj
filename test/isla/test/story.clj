@@ -20,20 +20,20 @@
              :name "mary")))))
 
 (deftest test-room-alteration
-  (let [description "The floors are made of marble."
+  (let [summary "The floors are made of marble."
         story-str (str "palace is a room
-                        palace description is '" description "'")
+                        palace summary is '" summary "'")
         story (init-story story-str)]
     (is (= (first (:rooms story))
            (assoc (isla.interpreter/instantiate-type (get types "room"))
-             :name "palace" :description description)))))
+             :name "palace" :summary summary)))))
 
 ;; story telling
 
 (deftest test-look-general
-  (let [description "The floors are made of marble."
+  (let [summary "The floors are made of marble."
         story-str (str "palace is a room
-                        palace description is '" description "'")
+                        palace summary is '" summary "'")
         story (init-story story-str)]
     (is (= (run-command story "look")
-           description))))
+           summary))))

@@ -35,21 +35,21 @@
   ;;   (println "move!"))
   (look [this arguments]
     (if (nil? arguments)
-      (:description (get-current-room this))
+      (:summary (get-current-room this))
       (let [arguments-vec (str/split arguments #" ")]
         (if (= "at" (first arguments-vec))
           (if-let [item (get-item this (second arguments-vec))]
-            (:description item))
+            (:summary item))
           nil)))))
 
 
-(defrecord Monster [name description])
+(defrecord Monster [name summary])
 (def monster-defaults ["" ""])
 
-(defrecord Player [name description current-room])
+(defrecord Player [name summary current-room])
 (def player-defaults ["" "" 0])
 
-(defrecord Room [name description order items])
+(defrecord Room [name summary order items])
 (def room-defaults ["" "" 0 []])
 
 (defn init-story [story-str]
