@@ -3,7 +3,7 @@
   (:use [isla.library])
   (:require [clojure.string :as str]))
 
-(declare run-sequence first-content lookup nreturn instantiate-type
+(declare run-sequence lookup nreturn instantiate-type
          friendly-class friendly-symbol assign extract thr)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
@@ -18,7 +18,7 @@
   (run-sequence (:content node) env))
 
 (defmethod interpret :expression [node env]
-  (interpret (first (:content node)) env))
+  (interpret (extract node [:content 0]) env))
 
 (defmethod interpret :value-assignment [node env]
   (let [assignee (extract node [:content 0])
@@ -35,28 +35,27 @@
       (throw (Exception. (str "I do not know what a " type-identifier " is."))))))
 
 (defmethod interpret :invocation [node env]
-  (def content (vec (:content node)))
-  (def function (lookup (interpret (first content) env) env))
-  (def param (interpret (nth content 1) env))
+  (def function (lookup (interpret (extract node [:content 0]) env) env))
+  (def param (interpret (extract node [:content 1]) env))
   (let [return-val (function env param)] ;; call fn
     (nreturn (:ctx env) return-val)))
 
 (defmethod interpret :value [node env]
-  (if (= :identifier (:tag (first-content node)))
-    (lookup (first-content (first-content node)) env) ;; sub is identifier - lookup+return
-    (interpret (first-content node) env)))
+  (if (= :identifier (:tag (extract node [:content 0])))
+    (lookup (extract node [:content 0 :content 0]) env) ;; sub is identifier - lookup+return
+    (interpret (extract node [:content 0]) env)))
 
 (defmethod interpret :identifier [node _]
-  (first-content node))
+  (extract node [:content 0]))
 
 (defmethod interpret :assignee [node _]
-  (first-content node))
+  (extract node [:content 0]))
 
 (defmethod interpret :integer [node _]
-  (first-content node))
+  (extract node [:content 0]))
 
 (defmethod interpret :string [node _]
-  (str/replace (first-content node) "'" ""))
+  (str/replace (extract node [:content 0]) "'" ""))
 
 (defmulti assign (fn [_ assignee-node _] (extract assignee-node [:content 0 :tag])))
 
@@ -81,9 +80,6 @@
 
 (defn lookup [identifier env]
   (get (:ctx env) identifier))
-
-(defn first-content [node]
-  (first (:content node)))
 
 (defn extract [ast route]
   (if-let [nxt (first route)]
