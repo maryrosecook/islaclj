@@ -37,3 +37,10 @@
         story (init-story story-str)]
     (is (= (run-command story "look")
            summary))))
+
+(deftest test-look-at-myself
+  (let [summary "You have no shoes on."
+        story-str (str "my summary is '" summary "'")
+        story (init-story story-str)]
+    (is (= (run-command story "look at myself")
+           summary))))
