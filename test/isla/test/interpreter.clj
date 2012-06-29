@@ -33,8 +33,8 @@
 
 (def extra-types
   {"person"
-   {:type (defrecord Person [age name])
-    :defaults [0 ""]}})
+   {:type (defrecord Person [age name friend])
+    :defaults [0 "" :undefined]}})
 
 ;; type assignment
 
@@ -42,7 +42,7 @@
   (let [result (interpret (parse "isla is a person")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 0 "")))))
+           (new isla.test.interpreter.Person 0 "" :undefined)))))
 
 
 (deftest test-unknown-type-causes-exception
@@ -59,13 +59,13 @@
   (let [result (interpret (parse "isla is a person\nisla age is 1")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 1 "")))))
+           (new isla.test.interpreter.Person 1 "" :undefined)))))
 
 (deftest test-slot-assignment-retention-of-other-slot-values
   (let [result (interpret (parse "isla is a person\nisla name is 'isla'\nisla age is 1")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 1 "isla")))))
+           (new isla.test.interpreter.Person 1 "isla" :undefined)))))
 ;; test extract fn
 
 (deftest test-extract-block-tag

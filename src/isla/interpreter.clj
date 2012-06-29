@@ -3,7 +3,8 @@
   (:use [isla.library])
   (:require [clojure.string :as str]))
 
-(declare run-sequence first-content lookup nreturn instantiate-type)
+(declare run-sequence first-content lookup nreturn instantiate-type
+         friendly-class friendly-symbol assign extract thr)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
 
@@ -19,32 +20,19 @@
 (defmethod interpret :expression [node env]
   (interpret (first (:content node)) env))
 
-(defmethod interpret :slot-assignment [node env]
-  (let [content (:content node)
-        assignee (interpret (first content) env)
-        slot (keyword (interpret (second content) env))
-        value (interpret (nth content 3) env)]
-    (let [new-ctx (assoc (:ctx env)
-                    assignee
-                    (assoc (get (:ctx env) assignee) slot value))]
+(defmethod interpret :value-assignment [node env]
+  (let [assignee (extract node [:content 0])
+        value (interpret (extract node [:content 2]) env)]
+    (let [new-ctx (assign (:ctx env) assignee value)]
       (nreturn new-ctx))))
 
 (defmethod interpret :type-assignment [node env]
-  (let [content (:content node)
-        identifier (interpret (first content) env)
-        type-identifier (interpret (nth content 2) env)
-        type-hash (get (:types (:ctx env)) type-identifier)]
-    (if (nil? type-hash)
-      (throw (Exception. (str "I do not know what a " type-identifier " is.")))
-      (let [new-ctx (assoc (:ctx env) identifier (instantiate-type type-hash))]
-        (nreturn new-ctx)))))
-
-(defmethod interpret :assignment [node env]
-  (def content (:content node))
-  (def identifier (interpret (first content) env))
-  (def value (interpret (nth content 2) env))
-  (let [new-ctx (assoc (:ctx env) identifier value)]
-    (nreturn new-ctx)))
+  (let [assignee (extract node [:content 0])
+        type-identifier (interpret (extract node [:content 2]) env)]
+    (if-let [type-hash (get (:types (:ctx env)) type-identifier)]
+      (let [new-ctx (assign (:ctx env) assignee (instantiate-type type-hash))]
+        (nreturn new-ctx))
+      (throw (Exception. (str "I do not know what a " type-identifier " is."))))))
 
 (defmethod interpret :invocation [node env]
   (def content (vec (:content node)))
@@ -69,6 +57,20 @@
 
 (defmethod interpret :string [node _]
   (str/replace (first-content node) "'" ""))
+
+(defmulti assign (fn [_ assignee-node _] (extract assignee-node [:content 0 :tag])))
+
+(defmethod assign :assignee-scalar [ctx assignee-node value]
+  (assoc ctx (extract assignee-node [:content 0 :content 0 :content 0]) value))
+
+(defmethod assign :assignee-object [ctx assignee-node value]
+  (let [object-name (extract assignee-node [:content 0 :content 0 :content 0])
+        slot-name-str (extract assignee-node [:content 0 :content 1 :content 0])
+        current-slot-value (get (get ctx object-name) (keyword slot-name-str))]
+    (if (nil? current-slot-value) ;; initial value of intended slot will never be nil
+      (let [object-class (friendly-class (class (get ctx object-name)))]
+        (throw (Exception. (str object-class "s do not have a " slot-name-str "."))))
+      (assoc ctx object-name (assoc (get ctx object-name) (keyword slot-name-str) value)))))
 
 (defn nreturn
   ([ctx] {:ctx ctx :ret nil})
@@ -98,6 +100,13 @@
 
 (defn thr [pieces]
   (throw (Exception. (apply str pieces))))
+
+(defn friendly-class [clazz]
+  (last (str/split (str clazz) #"\.")))
+
+(defn friendly-symbol [simbol]
+  (last (str/split (str simbol) #":")))
+
 (defn run-sequence [nodes env]
   (if (empty? nodes)
     env ;; return env
