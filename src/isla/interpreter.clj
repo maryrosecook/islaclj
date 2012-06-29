@@ -96,6 +96,8 @@
    (:type type-hash)
    (to-array (:defaults type-hash))))
 
+(defn thr [pieces]
+  (throw (Exception. (apply str pieces))))
 (defn run-sequence [nodes env]
   (if (empty? nodes)
     env ;; return env
