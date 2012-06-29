@@ -6,8 +6,9 @@
 (declare parse nnode
          alternatives is-type pattern-sequence pattern
          pattern-sequence-selector one-token-pattern
-         -root -block -expression -slot-assignment -type-assignment -assignment -invocation
-         -nl -integer -is-a -is -string -assignee -value -identifier)
+         -root -block -expression -type-assignment -value-assignment -invocation
+         -nl -integer -is-a -is -string -assignee -value -identifier
+         -assignee-scalar -assignee-object)
 
 (defn parse [code]
   (-root (lex code)))
@@ -26,15 +27,8 @@
 ;; expressions
 
 (defn -expression [tokens collected]
-  (pattern-sequence-selector tokens [-slot-assignment -type-assignment
-                                     -assignment -invocation]
+  (pattern-sequence-selector tokens [-type-assignment -value-assignment -invocation]
                              :expression))
-
-(defn -slot-assignment [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-assignee -identifier -is -value -nl] [])]
-    {:node (nnode :slot-assignment (take 4 nodes)) :left-tokens left-tokens}
-    nil))
 
 (defn -type-assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
@@ -42,10 +36,10 @@
     {:node (nnode :type-assignment (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
-(defn -assignment [tokens]
+(defn -value-assignment [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
            (pattern-sequence tokens [-assignee -is -value -nl] [])]
-    {:node (nnode :assignment (take 3 nodes)) :left-tokens left-tokens}
+    {:node (nnode :value-assignment (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
 (defn -invocation [tokens]
@@ -72,7 +66,20 @@
 (defn -value [tokens]
   (pattern-sequence-selector tokens [-string -integer -identifier] :value))
 
-(defn -assignee [tokens] (one-token-pattern tokens #"[A-Za-z]+" :assignee))
+(defn -assignee [tokens]
+  (pattern-sequence-selector tokens [-assignee-object -assignee-scalar] :assignee))
+
+(defn -assignee-scalar [tokens]
+  (if-let [{nodes :nodes left-tokens :left-tokens}
+           (pattern-sequence tokens [-identifier] [])]
+    {:node (nnode :assignee-scalar (take 1 nodes)) :left-tokens left-tokens}
+    nil))
+
+(defn -assignee-object [tokens]
+  (if-let [{nodes :nodes left-tokens :left-tokens}
+           (pattern-sequence tokens [-identifier -identifier] [])]
+    {:node (nnode :assignee-object (take 2 nodes)) :left-tokens left-tokens}
+    nil))
 
 (defn -identifier [tokens] (one-token-pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
 
