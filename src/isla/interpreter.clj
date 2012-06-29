@@ -35,10 +35,10 @@
       (throw (Exception. (str "I do not know what a " type-identifier " is."))))))
 
 (defmethod interpret :invocation [node env]
-  (def function (lookup (interpret (extract node [:content 0]) env) env))
-  (def param (interpret (extract node [:content 1]) env))
-  (let [return-val (function env param)] ;; call fn
-    (nreturn (:ctx env) return-val)))
+  (let [function (lookup (interpret (extract node [:content 0]) env) env)
+        param (interpret (extract node [:content 1]) env)]
+    (let [return-val (function env param)] ;; call fn
+      (nreturn (:ctx env) return-val))))
 
 (defmethod interpret :value [node env]
   (if (= :identifier (:tag (extract node [:content 0])))

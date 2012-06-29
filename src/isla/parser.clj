@@ -111,11 +111,11 @@
                     types))))
 
 (defn pattern-sequence-selector [tokens pattern-sequences tag]
-  (def alts (alternatives tokens pattern-sequences))
-  (if (> (count alts) 0)
-    (let [{node :node left-tokens :left-tokens} (first alts)]
-      {:node (nnode tag [node]) :left-tokens left-tokens}) ;; return alternative
-    nil)) ;; no alternatives match - return
+  (let [alts (alternatives tokens pattern-sequences)]
+    (if (> (count alts) 0)
+      (let [{node :node left-tokens :left-tokens} (first alts)]
+        {:node (nnode tag [node]) :left-tokens left-tokens}) ;; return alternative
+      nil))) ;; no alternatives match - return
 
 (defn pattern-sequence [tokens patterns collected]
   (if-let [pattern (first patterns)]
