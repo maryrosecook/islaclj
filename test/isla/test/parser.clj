@@ -8,7 +8,7 @@
 (defmethod check-ast java.util.Map [actual expected]
   (def actual-tag (:tag actual))
   (is (contains? expected actual-tag)) ;; check parent
-  (check-ast (:content actual) (actual-tag expected))) ;; recurse sub tree
+  (check-ast (:c actual) (actual-tag expected))) ;; recurse sub tree
 
 (defmethod check-ast java.util.List [actual expected]
   (is (= (count actual) (count expected))) ;; if not same len, got a problem
@@ -21,7 +21,7 @@
 ;; nnode
 
 (deftest nnode-create
-  (is (= (nnode :integer [1]) {:tag :integer :content [1]})))
+  (is (= (nnode :integer [1]) {:tag :integer :c [1]})))
 
 ;; slot assignment
 

@@ -135,4 +135,4 @@
     nil))
 
 (defn nnode [tag data]
-  {:tag tag :content data})
+  {:tag tag :c data})
