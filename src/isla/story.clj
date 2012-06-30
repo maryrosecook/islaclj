@@ -46,8 +46,8 @@
 (defrecord Player [name summary room])
 (def player-defaults ["" "" :undefined])
 
-(defrecord Room [name summary order items])
-(def room-defaults ["" "" 0 []])
+(defrecord Room [name summary items door])
+(def room-defaults ["" "" [] :undefined])
 
 (defn init-story [story-str]
   (let [env (interpreter/interpret
