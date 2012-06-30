@@ -33,7 +33,8 @@
 (deftest test-look-general
   (let [summary "The floors are made of marble."
         story-str (str "palace is a room
-                        palace summary is '" summary "'")
+                        palace summary is '" summary "'
+                        my room is palace")
         story (init-story story-str)]
     (is (= (run-command story "look")
            summary))))
