@@ -6,7 +6,7 @@
   (:require [isla.interpreter :as interpreter])
   (:require [isla.library :as library]))
 
-(declare types name-into-objs extract-by-class get-story-ctx)
+(declare types name-into-objs extract-by-class get-story-ctx seq-to-hash)
 
 (defprotocol Queryable
   (get-all-items [this])
@@ -55,9 +55,9 @@
              (library/get-initial-env types (get-story-ctx)))
         ctx (:ctx env)
 
-        rooms (name-into-objs (extract-by-class ctx (:type (get types "room"))))
+        rooms (seq-to-hash (name-into-objs
+                            (extract-by-class ctx (:type (get types "room")))) :name)
         player (val (first (extract-by-class ctx (:type (get types "_player")))))]
-
     (Story. player rooms)))
 
 (defn run-command [story command-str]
@@ -78,6 +78,9 @@
   (filter
    (fn [x] (= clazz (class (val x))))
    ctx))
+
+(defn seq-to-hash [seq- key-]
+  (reduce (fn [hash el] (assoc hash (key- el) el)) {} seq-))
 
 (def types
   {

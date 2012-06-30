@@ -8,7 +8,7 @@
 (deftest test-room-creation
   (let [story-str (str "palace is a room")
         story (init-story story-str)]
-    (is (= (first (:rooms story))
+    (is (= (get (:rooms story) "palace")
            (assoc (isla.interpreter/instantiate-type (get types "room"))
              :name "palace")))))
 
@@ -24,7 +24,7 @@
         story-str (str "palace is a room
                         palace summary is '" summary "'")
         story (init-story story-str)]
-    (is (= (first (:rooms story))
+    (is (= (get (:rooms story) "palace")
            (assoc (isla.interpreter/instantiate-type (get types "room"))
              :name "palace" :summary summary)))))
 
