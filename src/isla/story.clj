@@ -8,7 +8,6 @@
 
 (declare types name-into-objs extract-by-class get-story-ctx)
 
-  (get-current-room [this])
 (defprotocol Queryable
   (get-all-items [this])
   (get-item [this name]))
@@ -18,8 +17,6 @@
   (look [this arguments]))
 
 (defrecord Story [player rooms]
-  (get-current-room [this]
-    (first (filter (fn [x] (= (:order x) (:current-room player))) rooms)))
   Queryable
   (get-all-items [this]
     (concat (map (fn [x] (:items x)) rooms)))
@@ -35,7 +32,7 @@
   ;;   (println "move!"))
   (look [this arguments]
     (if (nil? arguments)
-      (:summary (get-current-room this))
+      (:summary (get player :room))
       (let [arguments-vec (str/split arguments #" ")]
         (if (= "at" (first arguments-vec))
           (if-let [item (get-item this (second arguments-vec))]
@@ -46,8 +43,8 @@
 (defrecord Monster [name summary])
 (def monster-defaults ["" ""])
 
-(defrecord Player [name summary current-room])
-(def player-defaults ["" "" 0])
+(defrecord Player [name summary room])
+(def player-defaults ["" "" :undefined])
 
 (defrecord Room [name summary order items])
 (def room-defaults ["" "" 0 []])
