@@ -8,8 +8,8 @@
 
 (declare types name-into-objs extract-by-class get-story-ctx)
 
-(defprotocol Explorable
   (get-current-room [this])
+(defprotocol Queryable
   (get-all-items [this])
   (get-item [this name]))
 
@@ -18,9 +18,9 @@
   (look [this arguments]))
 
 (defrecord Story [player rooms]
-  Explorable
   (get-current-room [this]
     (first (filter (fn [x] (= (:order x) (:current-room player))) rooms)))
+  Queryable
   (get-all-items [this]
     (concat (map (fn [x] (:items x)) rooms)))
   (get-item [this name]
