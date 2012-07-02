@@ -41,9 +41,11 @@
       (nreturn (:ctx env) return-val))))
 
 (defmethod interpret :value [node env]
-  (if (= :identifier (:tag (extract node [:c 0])))
-    (lookup (extract node [:c 0 :c 0]) env) ;; sub is identifier - lookup+return
-    (interpret (extract node [:c 0]) env)))
+  (let [sub-node (extract node [:c 0])]
+    (if (= :identifier (:tag sub-node))
+      (let [ref (interpret sub-node env)]
+        {:ref ref :val (lookup-ref ref env)})
+      {:val (interpret sub-node env)})))
 
 (defmethod interpret :identifier [node _]
   (extract node [:c 0]))
