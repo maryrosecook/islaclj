@@ -50,6 +50,9 @@
         {:ref ref :val (lookup-ref ref env)})
       {:val (interpret sub-node env)})))
 
+(defmethod interpret :literal [node env]
+  (interpret (extract node [:c 0]) env))
+
 (defmethod interpret :identifier [node _]
   (extract node [:c 0]))
 
