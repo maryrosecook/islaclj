@@ -3,7 +3,7 @@
   (:use [isla.library])
   (:require [clojure.string :as str]))
 
-(declare run-sequence lookup nreturn instantiate-type
+(declare run-sequence lookup-ref lookup nreturn instantiate-type
          friendly-class friendly-symbol assign extract thr)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
@@ -86,8 +86,13 @@
 (defn remret [env]
   (assoc env :ret nil))
 
+(defn lookup-ref [ref env]
+  (lookup (get (:ctx env) ref) env))
+
 (defn lookup [identifier env]
-  (get (:ctx env) identifier))
+  (if (contains? identifier :ref)
+    (lookup (get (:ctx env) (:ref identifier)) env)
+    identifier))
 
 (defn extract [ast route]
   (if-let [nxt (first route)]
