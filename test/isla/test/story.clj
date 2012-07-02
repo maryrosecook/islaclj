@@ -1,7 +1,8 @@
 (ns isla.test.story
   (:use [clojure.test])
   (:use [clojure.pprint])
-  (:use [isla.story]))
+  (:use [isla.story])
+  (:require [isla.interpreter :as interpreter]))
 
 ;; story creation
 
@@ -9,14 +10,14 @@
   (let [story-str (str "palace is a room")
         story (init-story story-str)]
     (is (= (get (:rooms story) "palace")
-           (assoc (isla.interpreter/instantiate-type (get types "room"))
+           (assoc (interpreter/instantiate-type (get types "room"))
              :name "palace")))))
 
 (deftest test-player-alteration
   (let [story-str (str "my name is 'mary'")
         story (init-story story-str)]
     (is (= (:player story)
-           (assoc (isla.interpreter/instantiate-type (get types "_player"))
+           (assoc (interpreter/instantiate-type (get types "_player"))
              :name "mary")))))
 
 (deftest test-room-alteration
@@ -25,7 +26,7 @@
                         palace summary is '" summary "'")
         story (init-story story-str)]
     (is (= (get (:rooms story) "palace")
-           (assoc (isla.interpreter/instantiate-type (get types "room"))
+           (assoc (interpreter/instantiate-type (get types "room"))
              :name "palace" :summary summary)))))
 
 ;; story telling
