@@ -18,6 +18,10 @@
     (is (= (get (:ctx result) "isla")
            1))))
 
+
+
+;; invocation
+
 (deftest test-single-invoke-returns-return-value
   (let [result (interpret (parse "write 2"))]
     (is (= (:ret result) 2))))
@@ -45,7 +49,6 @@
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
            (new isla.test.interpreter.Person 0 "" :undefined)))))
-
 
 (deftest test-unknown-type-causes-exception
   (try
