@@ -8,7 +8,7 @@
          pattern-sequence-selector one-token-pattern
          -root -block -expression -type-assignment -value-assignment -invocation
          -nl -integer -is-a -is -string -assignee -value -identifier
-         -assignee-scalar -assignee-object)
+         -assignee-scalar -assignee-object -literal)
 
 (defn parse [code]
   (-root (lex code)))
@@ -64,7 +64,7 @@
 ;; values
 
 (defn -value [tokens]
-  (pattern-sequence-selector tokens [-string -integer -identifier] :value))
+  (pattern-sequence-selector tokens [-literal -identifier] :value))
 
 (defn -assignee [tokens]
   (pattern-sequence-selector tokens [-assignee-object -assignee-scalar] :assignee))
@@ -82,6 +82,9 @@
     nil))
 
 (defn -identifier [tokens] (one-token-pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
+
+(defn -literal [tokens]
+  (pattern-sequence-selector tokens [-integer -string] :literal))
 
 (defn -integer [tokens]
   (one-token-pattern tokens #"[0-9]+" :integer

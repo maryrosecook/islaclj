@@ -33,9 +33,9 @@
                                                [{:identifier ["isla"]}
                                                 {:identifier ["age"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:integer [1]}]}]}]}]}]}))
+                                  {:value [{:literal [{:integer [1]}]}]}]}]}]}]}))
 
-;; ;; type assignment
+;; type assignment
 
 (deftest type-assignment
   (check-ast (parse "mary is a girl")
@@ -66,7 +66,7 @@
                                [{:value-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:integer [1]}]}]}]}]}]}))
+                                  {:value [{:literal [{:integer [1]}]}]}]}]}]}]}))
 
 (deftest assignment-identifier
   (check-ast (parse "isla is age")
@@ -82,10 +82,9 @@
                                [{:value-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["isla"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:string ["cool"]}]}]}]}]}]}))
+                                  {:value [{:literal [{:string ["cool"]}]}]}]}]}]}]}))
 
-
-;; ;; blocks
+;; blocks
 
 (deftest two-expression-block
   (check-ast (parse "isla is 1\nmary is 2")
@@ -93,14 +92,12 @@
                                [{:value-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["isla"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:integer [1]}]}]}]}
+                                  {:value [{:literal [{:integer [1]}]}]}]}]}
                               {:expression
                                [{:value-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:integer [2]}]}]}]}]}]}))
-
-
+                                  {:value [{:literal [{:integer [2]}]}]}]}]}]}]}))
 
 (deftest three-expression-block
   (check-ast (parse "name is 'Isla'\nwrite 'la'\nwrite name")
@@ -108,17 +105,16 @@
                                [{:value-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["name"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:string ["Isla"]}]}]}]}
+                                  {:value [{:literal [{:string ["Isla"]}]}]}]}]}
                               {:expression
                                [{:invocation
                                  [{:identifier ["write"]}
-                                  {:value [{:string ["la"]}]}]}]}
+                                  {:value [{:literal [{:string ["la"]}]}]}]}]}
                               {:expression
                                [{:invocation
                                  [{:identifier ["write"]}
                                   {:value [{:identifier ["name"]}]}]}]}
                               ]}]}))
-
 
 (deftest test-block-with-type-ass-and-value-ass
   (check-ast (parse "name is 'Isla'\nmary is a girl\nwrite name")
@@ -126,7 +122,7 @@
                                [{:value-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["name"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:string ["Isla"]}]}]}]}
+                                  {:value [{:literal [{:string ["Isla"]}]}]}]}]}
                               {:expression
                                [{:type-assignment
                                  [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
@@ -138,19 +134,18 @@
                                   {:value [{:identifier ["name"]}]}]}]}
                               ]}]}))
 
-
-;; ;; invocation
+;; invocation
 
 (deftest invoke-fn-one-param
   (check-ast (parse "write 'isla'")
              {:root [{:block [{:expression
                                [{:invocation
                                  [{:identifier ["write"]}
-                                  {:value [{:string ["isla"]}]}]}]}]}]}))
+                                  {:value [{:literal [{:string ["isla"]}]}]}]}]}]}]}))
 
 (deftest test-write-string-regression
-  (check-ast (parse "write 'My name is Isla'")
+  (check-ast (parse "write 'My name Isla'")
              {:root [{:block [{:expression
                                [{:invocation
                                  [{:identifier ["write"]}
-                                  {:value [{:string ["My name is Isla"]}]}]}]}]}]}))
+                                  {:value [{:literal [{:string ["My name Isla"]}]}]}]}]}]}]}))
