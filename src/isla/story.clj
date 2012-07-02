@@ -6,7 +6,7 @@
   (:require [isla.interpreter :as interpreter])
   (:require [isla.library :as library]))
 
-(declare types name-into-objs extract-by-class get-story-ctx seq-to-hash)
+(declare types name-into-objs extract-by-class get-story-ctx seq-to-hash resolve-)
 
 (defprotocol Queryable
   (get-all-items [this])
@@ -53,7 +53,7 @@
   (let [env (interpreter/interpret
              (parser/parse story-str)
              (library/get-initial-env types (get-story-ctx)))
-        ctx (:ctx env)
+        ctx (resolve- (:ctx env) env)
 
         rooms (seq-to-hash (name-into-objs
                             (extract-by-class ctx (:type (get types "room")))) :name)
@@ -65,6 +65,18 @@
         arguments-str (second (str/split command-str #" " 2))
         arguments-vec (if (nil? arguments-str) [nil] [arguments-str])]
     (clojure.lang.Reflector/invokeInstanceMethod story command (to-array arguments-vec))))
+
+(defmulti resolve- (fn [ast env] (class ast)))
+
+(defmethod resolve- :default [thing env] thing)
+
+(defmethod resolve- java.util.Map [ast env]
+  (if (contains? ast :ref)
+    (let []
+      (interpreter/lookup ast env)) ;; resolve
+    (reduce (fn [hash el] ;; dive down
+              (merge hash el)) ast
+              (map (fn [e] {(get e 0) (resolve- (get e 1) env)}) ast))))
 
 (defn get-story-ctx []
   {"my" (interpreter/instantiate-type (get types "_player"))})
