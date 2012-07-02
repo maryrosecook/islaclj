@@ -6,6 +6,13 @@
   (:use [clojure.test])
   (:use [clojure.pprint]))
 
+(def extra-types
+  {"person"
+   {:type (defrecord Person [age name friend])
+    :defaults [0 "" :undefined]}})
+
+;; non-slot assignment
+
 (deftest integer-assignment
   (let [result (interpret (parse "isla is 1"))]
     (is (= (get (:ctx result) "isla")
@@ -30,11 +37,6 @@
 (deftest test-write-assigned-value
   (let [result (interpret (parse "name is 'mary'\nwrite name"))]
     (is (= (:ret result) "mary"))))
-
-(def extra-types
-  {"person"
-   {:type (defrecord Person [age name friend])
-    :defaults [0 "" :undefined]}})
 
 ;; type assignment
 
