@@ -29,6 +29,17 @@
            (assoc (interpreter/instantiate-type (get types "room"))
              :name "palace" :summary summary)))))
 
+(deftest test-room-connection
+  (let [story-str (str "palace is a room
+                        garden is a room
+                        palace exit is garden")
+        story (init-story story-str)]
+    (is (= (get (:rooms story) "palace")
+           (assoc (interpreter/instantiate-type (get types "room"))
+             :name "palace"
+             :exit (interpreter/instantiate-type (get types "room")))))))
+
+
 ;; story telling
 
 (deftest test-look-general
