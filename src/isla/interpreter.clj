@@ -22,7 +22,10 @@
 
 (defmethod interpret :value-assignment [node env]
   (let [assignee (extract node [:c 0])
-        value (interpret (extract node [:c 2]) env)]
+        value-node (interpret (extract node [:c 2]) env)
+        value (if (contains? value-node :ref)
+                {:ref (:ref value-node)}
+                (:val value-node))]
     (let [new-ctx (assign (:ctx env) assignee value)]
       (nreturn new-ctx))))
 
