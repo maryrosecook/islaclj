@@ -21,7 +21,7 @@
 (deftest test-existing-obj-assignment-to-var
   (let [env (interpret (parse "isla is a person\nfriend is isla\nisla age is 1")
                        (library/get-initial-env extra-types))]
-    (is (= (lookup-ref "friend" env)
+    (is (= (resolve- {:ref "friend"} env)
            (new isla.test.interpreter.Person 1 "" :undefined)))))
 
 
