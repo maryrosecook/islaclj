@@ -24,6 +24,15 @@
     (is (= (resolve- {:ref "friend"} env)
            (new isla.test.interpreter.Person 1 "" :undefined)))))
 
+(deftest test-lookup-resolves-object-slot-to-object-reference-with-updated-data
+  (let [env (interpret (parse "isla is a person
+                               mary is a person
+                               mary friend is isla
+                               isla age is 1")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "mary"} env)
+           (let [isla (new isla.test.interpreter.Person 1 "" :undefined)]
+             (new isla.test.interpreter.Person 0 "" isla))))))
 
 ;; invocation
 
