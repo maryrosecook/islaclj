@@ -33,9 +33,9 @@
   (let [assignee (extract node [:c 0])
         type-identifier (interpret (extract node [:c 2]) env)]
     (if-let [type-hash (get (:types (:ctx env)) type-identifier)]
-      (let [new-ctx (assign (:ctx env) assignee (instantiate-type type-hash))]
+      (let [new-ctx (assign (:ctx env) assignee (story-utils/instantiate-type type-hash))]
         (nreturn new-ctx))
-      (throw (Exception. (str "I do not know what a " type-identifier " is."))))))
+      (utils/thr (str "I do not know what a " type-identifier " is.")))))
 
 (defmethod interpret :invocation [node env]
   (let [function (lookup-ref (interpret (extract node [:c 0]) env) env)
@@ -76,7 +76,7 @@
         current-slot-value (get (get ctx object-name) (keyword slot-name-str))]
     (if (nil? current-slot-value) ;; initial value of intended slot will never be nil
       (let [object-class (friendly-class (class (get ctx object-name)))]
-        (throw (Exception. (str object-class "s do not have a " slot-name-str "."))))
+        (utils/thr (str object-class "s do not have a " slot-name-str ".")))
       (assoc ctx object-name (assoc (get ctx object-name) (keyword slot-name-str) value)))))
 
 (defn nreturn
@@ -99,16 +99,8 @@
     (let [unrolled-ast (if (seq? ast) (vec ast) ast)]
       (if (contains? unrolled-ast nxt)
         (extract (get unrolled-ast nxt) (rest route))
-        (thr ["AST " unrolled-ast " does not have " nxt])))
+        (utils/thr ["AST " unrolled-ast " does not have " nxt])))
     ast))
-
-(defn instantiate-type [type-hash]
-  (clojure.lang.Reflector/invokeConstructor
-   (:type type-hash)
-   (to-array (:defaults type-hash))))
-
-(defn thr [pieces]
-  (throw (Exception. (apply str pieces))))
 
 (defn friendly-class [clazz]
   (last (str/split (str clazz) #"\.")))
