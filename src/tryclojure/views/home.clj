@@ -64,14 +64,14 @@
            Then, play through your adventure:
           "]
          [:div.story.story-playthrough "
-           > <span class='command'>play hallway</span>
+           <span class='command'>> play The Hallway</span>
            <div class='output'>Are you sitting comfortably? Then, we shall begin.</div>
-           > <span class='command'>look</span>
+           <span class='command'>> look</span>
            <div class='output'>You are in a hallway.  A candle burns in front of a mirror.
            You can see a door.</div>
-           > <span class='command'>open door</span>
+           <span class='command'>> open door</span>
            <div class='output'>The door is locked.</div>
-           > <span class='command'>look at table</span>
+           <span class='command'>> look at table</span>
            <div class='output'>You find a key.</div>
           "]
          [:p "
