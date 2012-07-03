@@ -1,6 +1,6 @@
 # Isla
 
-A programming language for children.
+A programming language for young children.
 
 ## License
 
