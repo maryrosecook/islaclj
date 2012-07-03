@@ -1,9 +1,9 @@
 (ns isla.story
   (:use [clojure.pprint])
   (:require [clojure.string :as str])
-  (:require [isla.utils :as utils])
   (:require [isla.parser :as parser])
   (:require [isla.interpreter :as interpreter])
+  (:require [isla.story-utils :as story-utils])
   (:require [isla.library :as library]))
 
 (declare types name-into-objs extract-by-class get-story-ctx seq-to-hash resolve-)

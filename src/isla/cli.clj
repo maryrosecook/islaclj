@@ -1,7 +1,7 @@
 (ns isla.cli
   (:use [isla.parser])
   (:use [isla.interpreter])
-  (:require [isla.utils :as utils])
+  (:require [isla.story-utils :as story-utils])
   (:require [isla.library :as library])
   (:use [clojure.pprint])
   (:import java.io.File)
@@ -23,7 +23,7 @@
 
 (defn write-out-stories []
   (doseq [file (get-stories)]
-    (utils/output (str "  " (str/capitalize (first (str/split (.getName file) #"\.")))))))
+    (story-utils/output (str "  " (str/capitalize (first (str/split (.getName file) #"\.")))))))
 
 (defn introduction []
   (println (str "
@@ -40,8 +40,8 @@
   (def repl-context (ref (library/get-initial-context)))
 
   (println)
-  (utils/output "-------------------------------------------------------\n")
-  (utils/output "Hello. My name is Isla. It's terribly nice to meet you.\n")
+  (story-utils/output "-------------------------------------------------------\n")
+  (story-utils/output "Hello. My name is Isla. It's terribly nice to meet you.\n")
 
   (repl)
 
@@ -53,13 +53,13 @@
   (dosync (ref-set repl-context (interpret (parse code) (deref repl-context)))))
 
 (defn repl []
-  (run (utils/take-input))
+  (run (story-utils/take-input))
   (repl))
 
 ;; (defn -main [& args]
 ;;   (introduction)
 
-;;   (run-story (utils/take-input))
+;;   (run-story (story-utils/take-input))
 ;;   ;; (def first-story (first (str/split (.getName (first (get-stories))) #"\.")))
 ;;   ;; (run-story first-story)
 

@@ -2,7 +2,7 @@
   (:use [clojure.pprint])
   (:require [clojure.string :as str])
   (:require [isla.user :as user])
-  (:require [isla.utils :as utils]))
+  (:require [isla.story-utils :as story-utils]))
 
 (defn get-initial-env [& args]
   (def extra-types (first args))
@@ -12,7 +12,7 @@
     {
      ;; fns
      "write" (fn [env str]
-               (utils/output str) ;; print out
+               (story-utils/output str) ;; print out
                str) ;; add to context
 
 
