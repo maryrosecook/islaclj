@@ -27,6 +27,11 @@ body {
  font-size: 48px;
 }
 
+#subtitle {
+ font-size:13px;
+ text-align:center;
+}
+
 #header h1 span.logo-try {
  color: #63b132;
  display:inline;

@@ -38,13 +38,12 @@
     [:div#wrapper
      [:div#content
       [:div#header
-       [:h1 "Isla"]]
+       [:h1 "Isla"]
+       [:div#subtitle "A programming language for young children"]]
       [:div#container
        [:div.prose-holder
         [:div.prose
-         [:p "A programming language for young children.
-              <br/><br/>
-              Use it to write your own story:
+         [:p "Use Isla to write your own story:
           "]
          [:div.story.story-code "
            <span class='identifier'>my</span> <span class='identifier'>name</a>
