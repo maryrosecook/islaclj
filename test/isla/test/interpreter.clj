@@ -18,7 +18,7 @@
     (is (= (get (:ctx result) "isla")
            1))))
 
-(deftest test-existing-obj-assignment-to-var
+(deftest test-lookup-resolves-to-referenced-data-with-updated-value
   (let [env (interpret (parse "isla is a person\nfriend is isla\nisla age is 1")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "friend"} env)
