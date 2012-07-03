@@ -9,7 +9,6 @@
   (:use [isla.interpreter])
   (:require [clojure.string :as str])
   (:require [isla.story :as story])
-  (:require [isla.utils :as utils])
   (:require [isla.library :as library])
 
   (:import java.io.File)
@@ -65,5 +64,3 @@
   (if (nil? story)
     (throw (Exception. "Type 'hear --story--' to begin."))
     (story/run-command story expr)))
-
-;; utils
