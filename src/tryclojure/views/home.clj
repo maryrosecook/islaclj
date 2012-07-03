@@ -75,7 +75,7 @@
            <div class='output'>You find a key.</div>
           "]
          [:p "
-           No public version, yet.  The
+           No public demo, yet.  The
            <a href='http://github.com/maryrosecook/isla'>code</a> is on github.
           "]
          ]]
