@@ -58,7 +58,7 @@
 
            <span class='identifier'>hallway</a> <span class='identifier'>summary</a>
            <span class='keyword'>is</a>
-           <span class='string'>'You are in a hallway.  A candle burns on a table.  You can see a door.'</a>
+           <span class='string'>'A candle burns on a table.'</a>
           "]
          [:p "
            Then, play through your adventure:
