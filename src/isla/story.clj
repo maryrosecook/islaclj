@@ -4,6 +4,7 @@
   (:require [isla.parser :as parser])
   (:require [isla.interpreter :as interpreter])
   (:require [isla.story-utils :as story-utils])
+  (:require [mrc.utils :as utils])
   (:require [isla.library :as library]))
 
 (declare types name-into-objs extract-by-class get-story-ctx seq-to-hash resolve-)
@@ -64,12 +65,11 @@
   (let [command (first (str/split command-str #" "))
         arguments-str (second (str/split command-str #" " 2))
         arguments-vec (if (nil? arguments-str) [nil] [arguments-str])]
-    (clojure.lang.Reflector/invokeInstanceMethod story command (to-array arguments-vec))))
-
+    (utils/run-method story command arguments-vec)))
 
 
 (defn get-story-ctx []
-  {"my" (interpreter/instantiate-type (get types "_player"))})
+  {"my" (story-utils/instantiate-type (get types "_player"))})
 
 ;; keys+vals -> vals
 (defn name-into-objs [objs]
