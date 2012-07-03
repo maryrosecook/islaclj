@@ -3,8 +3,8 @@
   (:use [isla.library])
   (:require [clojure.string :as str]))
 
-(declare run-sequence lookup-ref lookup nreturn instantiate-type
-         friendly-class friendly-symbol assign extract thr)
+(declare run-sequence resolve- nreturn
+         friendly-class friendly-symbol assign extract)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
 
@@ -38,7 +38,7 @@
       (utils/thr (str "I do not know what a " type-identifier " is.")))))
 
 (defmethod interpret :invocation [node env]
-  (let [function (lookup-ref (interpret (extract node [:c 0]) env) env)
+  (let [function (resolve- {:ref (interpret (extract node [:c 0]) env)} env)
         param (:val (interpret (extract node [:c 1]) env))]
     (let [return-val (function env param)] ;; call fn
       (nreturn (:ctx env) return-val))))
@@ -47,7 +47,7 @@
   (let [sub-node (extract node [:c 0])]
     (if (= :identifier (:tag sub-node))
       (let [ref (interpret sub-node env)]
-        {:ref ref :val (lookup-ref ref env)})
+        {:ref ref :val (resolve- {:ref ref} env)})
       {:val (interpret sub-node env)})))
 
 (defmethod interpret :literal [node env]
@@ -86,8 +86,6 @@
 (defn remret [env]
   (assoc env :ret nil))
 
-(defn lookup-ref [ref env]
-  (lookup (get (:ctx env) ref) env))
 ;; does not handle circular references
 (defmulti resolve- (fn [ast env] (class ast)))
 
@@ -109,10 +107,6 @@
 
 
 
-(defn lookup [identifier env]
-  (if (contains? identifier :ref)
-    (lookup (get (:ctx env) (:ref identifier)) env)
-    identifier))
 
 (defn extract [ast route]
   (if-let [nxt (first route)]
