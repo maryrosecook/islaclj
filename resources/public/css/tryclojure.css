@@ -56,12 +56,16 @@ body {
 .story {
   background-color:#0C132E;
   margin-left:-30px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 
 .story-code {
   width:572px;
   padding:20px 32px 20px 30px;
   color: #fff;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 
 .story-code .identifier { color:#fff; }
