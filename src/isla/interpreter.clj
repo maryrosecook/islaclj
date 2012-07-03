@@ -88,6 +88,26 @@
 
 (defn lookup-ref [ref env]
   (lookup (get (:ctx env) ref) env))
+;; does not handle circular references
+(defmulti resolve- (fn [ast env] (class ast)))
+
+(defmethod resolve- :default [thing env] thing)
+
+;; (defmethod resolve- clojure.lang.PersistentVector [vec- env]
+;;   (if (> (count vec-) 0)
+;;     (let []
+;;       (pprint vec-)
+;;       (utils/thr "Time to fill out lookup for arrays")))
+;;   vec-)
+
+(defmethod resolve- java.util.Map [ast env]
+  (if (contains? ast :ref)
+    (resolve- (get (:ctx env) (:ref ast)) env) ;; resolve and dive down
+    (reduce (fn [hash el] ;; just dive down
+              (merge hash el)) ast
+              (map (fn [e] {(get e 0) (resolve- (get e 1) env)}) ast))))
+
+
 
 (defn lookup [identifier env]
   (if (contains? identifier :ref)
