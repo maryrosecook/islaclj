@@ -67,7 +67,7 @@
            <span class='command'>> play The Hallway</span>
            <div class='output'>Are you sitting comfortably? Then, we shall begin.</div>
            <span class='command'>> look</span>
-           <div class='output'>You are in a hallway.  A candle burns in front of a mirror.
+           <div class='output'>You are in a hallway.  A candle burns on a table.
            You can see a door.</div>
            <span class='command'>> open door</span>
            <div class='output'>The door is locked.</div>
