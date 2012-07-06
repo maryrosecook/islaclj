@@ -5,7 +5,8 @@
   (:require [isla.interpreter :as interpreter])
   (:require [isla.story-utils :as story-utils])
   (:require [mrc.utils :as utils])
-  (:require [isla.library :as library]))
+  (:require [isla.library :as library])
+  (:require [isla.talk :as t]))
 
 (declare types name-into-objs extract-by-class get-story-ctx tuples-to-hash resolve-
          extract-arguments creturn)
@@ -57,6 +58,10 @@
              (assoc this :player (assoc player :room (get rooms name)))
             (creturn this (str "You cannot go into the " name ".")))))))
              (t/room-intro room))
+            (if (= name (:name (:room player)))
+              (creturn this (t/room-already name))
+              (creturn this (t/room-not-allowed name))))))))
+
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]
       (if (empty? arguments)
