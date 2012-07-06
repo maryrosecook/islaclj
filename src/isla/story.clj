@@ -51,12 +51,12 @@
   (go [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]
       (if (= "into" (first arguments))
-        (let [name (second arguments)]
+        (let [name (second arguments)
+              room (get rooms name)]
           (if (some #{name} (map (fn [x] (:name x))
                                  (connected-rooms (:room player) this)))
             (creturn
-             (assoc this :player (assoc player :room (get rooms name)))
-            (creturn this (str "You cannot go into the " name ".")))))))
+             (assoc this :player (assoc player :room room))
              (t/room-intro room))
             (if (= name (:name (:room player)))
               (creturn this (t/room-already name))
