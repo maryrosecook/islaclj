@@ -25,5 +25,3 @@
     (if (not= :nl (last tokens))
       (conj tokens :nl)
       tokens)))
-
-;; get rid of multiple newlines
