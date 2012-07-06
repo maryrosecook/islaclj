@@ -23,10 +23,9 @@
       {:expr expr
        :result [out (eval-expr mode expr)]})
     (catch TimeoutException _
-      {:error true :message "Execution Timed Out!"})))
-    ;; (catch Exception e
-    ;;   {:error true :message (str (root-cause e))})))
-
+      {:error true :message "Execution Timed Out!"})
+    (catch Exception e
+      {:error true :message (str (root-cause e))})))
 
 (defmulti eval-expr (fn [mode _] mode))
 (defmethod eval-expr "isla" [_ expr] (run-isla-code expr))
