@@ -24,6 +24,8 @@
   (item [this name]))
 
 (defprotocol Playable
+  (look [this arguments-str]))
+
 (def room-defaults ["" "" [] :undefined])
 (defrecord Room [name summary items exit]
   QueryableRoom
@@ -43,17 +45,13 @@
         nil)))
 
   Playable
-  (look [this arguments]
-    (if (nil? arguments)
-      (:summary (get player :room))
-      (let [arguments-vec (str/split arguments #" ")]
-        (if (= "at" (first arguments-vec))
-          (if-let [item (get-item this (second arguments-vec))]
-            (:summary item))
-          nil)))))
-
-
-
+  (look [this arguments-str]
+    (let [arguments (extract-arguments arguments-str)]
+      (if (empty? arguments)
+        (:summary (get player :room))
+        (if (= "at" (first arguments))
+          (if-let [item (item this (second arguments))]
+            (:summary item)))))))
 
 (defn init-story [story-str]
   (let [raw-env (interpreter/interpret
