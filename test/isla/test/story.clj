@@ -16,15 +16,13 @@
   (let [story-str (str "palace is a room")
         story (init-story story-str)]
     (is (= (get (:rooms story) "palace")
-           (assoc (story-utils/instantiate-type (get types "room"))
-             :name "palace")))))
+           (instantiate-with "room" :name "palace")))))
 
 (deftest test-player-alteration
   (let [story-str (str "my name is 'mary'")
         story (init-story story-str)]
     (is (= (:player story)
-           (assoc (story-utils/instantiate-type (get types "_player"))
-             :name "mary")))))
+           (instantiate-with "_player" :name "mary")))))
 
 (deftest test-room-alteration
   (let [summary "The floors are made of marble."
@@ -32,8 +30,7 @@
                         palace summary is '" summary "'")
         story (init-story story-str)]
     (is (= (get (:rooms story) "palace")
-           (assoc (story-utils/instantiate-type (get types "room"))
-             :name "palace" :summary summary)))))
+           (instantiate-with "room" :name "palace" :summary summary)))))
 
 (deftest test-room-connection
   (let [story-str (str "palace is a room
@@ -41,9 +38,8 @@
                         palace exit is garden")
         story (init-story story-str)]
     (is (= (get (:rooms story) "palace")
-           (assoc (story-utils/instantiate-type (get types "room"))
-             :name "palace"
-             :exit (story-utils/instantiate-type (get types "room")))))))
+           (instantiate-with "room" :name "palace"
+                             :exit (instantiate-with "room" :name "garden"))))))
 
 ;; story telling
 
