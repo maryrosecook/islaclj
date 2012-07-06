@@ -10,6 +10,7 @@
   (:require [clojure.string :as str])
   (:require [isla.story :as story])
   (:require [isla.library :as library])
+  (:require [isla.talk :as t])
 
   (:import java.io.File)
   (:import java.io.StringWriter
@@ -52,7 +53,7 @@
     (let [file-path (str/lower-case (str "stories/" story-name ".is"))
           story-str (slurp file-path)]
       (dosync (ref-set story (story/init-story story-str)))
-      "Are you sitting comfortably? Then, we shall begin.")
+      (t/room-intro (:room (:player (deref story)))))
     (throw (Exception. "You must specify the name of the story you want to load."))))
 
 (defmethod run-story-command :default [command expr] ;; normal command
