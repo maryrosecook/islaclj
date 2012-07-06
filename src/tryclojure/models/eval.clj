@@ -48,8 +48,6 @@
 (defmulti run-story-command (fn [command expr] command))
 
 (defmethod run-story-command "hear" [command expr]
-  (println command)
-  (println expr)
   (if-let [story-name (second (str/split expr #" "))]
     (let [file-path (str/lower-case (str "stories/" story-name ".is"))
           story-str (slurp file-path)]
