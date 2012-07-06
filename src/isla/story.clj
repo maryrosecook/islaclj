@@ -71,18 +71,18 @@
 (defn get-story-ctx []
   {"my" (story-utils/instantiate-type (get types "_player"))})
 
-;; keys+vals -> vals
 (defn name-into-objs [objs]
-  (map (fn [x] (assoc (val x) :name (key x)))
-       objs))
+  (tuples-to-hash (map (fn [{k 0 v 1}]
+                         [k (if (and (contains? v :name) (str/blank? (:name v)))
+                              (assoc v :name k)
+                              v)])
+                       objs)))
 
 (defn extract-by-class [ctx clazz]
-  (filter
-   (fn [x] (= clazz (class (val x))))
-   ctx))
+  (tuples-to-hash (filter
+                   (fn [x] (= clazz (class (val x))))
+                   ctx)))
 
-(defn seq-to-hash [seq- key-]
-  (reduce (fn [hash el] (assoc hash (key- el) el)) {} seq-))
 (defn tuples-to-hash [seq-]
   (reduce (fn [hash el] (assoc hash (get el 0) (get el 1)))
           {}
