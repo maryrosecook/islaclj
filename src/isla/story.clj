@@ -96,6 +96,10 @@
           {}
           seq-))
 
+(defn creturn
+  ([story] {:sto story :out nil})
+  ([story output] {:sto story :out output}))
+
 (def types
   {
    "monster" {:type isla.story.Monster :defaults monster-defaults}
