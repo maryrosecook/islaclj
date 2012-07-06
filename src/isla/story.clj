@@ -50,6 +50,10 @@
   (let [env (interpreter/interpret
              (parser/parse story-str)
              (library/get-initial-env types (get-story-ctx)))
+  (let [raw-env (interpreter/interpret
+                 (parser/parse story-str)
+                 (library/get-initial-env types (get-story-ctx)))
+        env (assoc raw-env :ctx (name-into-objs (:ctx raw-env)))
         ctx (interpreter/resolve- (:ctx env) env)
 
         rooms (seq-to-hash (name-into-objs
