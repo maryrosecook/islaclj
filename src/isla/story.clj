@@ -12,6 +12,13 @@
 (defprotocol Queryable
   (get-all-items [this])
   (get-item [this name]))
+(defrecord Monster [name summary])
+(def monster-defaults ["" ""])
+
+(defrecord Player [name summary room])
+(def player-defaults ["" "" :undefined])
+
+
 
 (defprotocol Playable
 
@@ -37,11 +44,6 @@
           nil)))))
 
 
-(defrecord Monster [name summary])
-(def monster-defaults ["" ""])
-
-(defrecord Player [name summary room])
-(def player-defaults ["" "" :undefined])
 
 (defrecord Room [name summary items exit])
 (def room-defaults ["" "" [] :undefined])
