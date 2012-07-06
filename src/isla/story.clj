@@ -7,7 +7,8 @@
   (:require [mrc.utils :as utils])
   (:require [isla.library :as library]))
 
-(declare types name-into-objs extract-by-class get-story-ctx seq-to-hash resolve-)
+(declare types name-into-objs extract-by-class get-story-ctx tuples-to-hash resolve-
+         extract-arguments creturn)
 
 (defrecord Monster [name summary])
 (def monster-defaults ["" ""])
@@ -70,6 +71,10 @@
         arguments-vec (if (nil? arguments-str) [nil] [arguments-str])]
     (utils/run-method story command arguments-vec)))
 
+(defn extract-arguments [arguments]
+  (if (nil? arguments)
+    []
+    (str/split arguments #" ")))
 
 (defn get-story-ctx []
   {"my" (story-utils/instantiate-type (get types "_player"))})
