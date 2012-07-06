@@ -9,8 +9,6 @@
 
 (declare types name-into-objs extract-by-class get-story-ctx seq-to-hash resolve-)
 
-  (get-all-items [this])
-  (get-item [this name]))
 (defrecord Monster [name summary])
 (def monster-defaults ["" ""])
 
@@ -19,15 +17,17 @@
 
 
 (defprotocol QueryableStory
+  (all-items [this])
+  (item [this name]))
 
 (defprotocol Playable
 
 (defrecord Story [player rooms]
-  (get-all-items [this]
   QueryableStory
+  (all-items [this]
     (concat (map (fn [x] (:items x)) rooms)))
-  (get-item [this name]
-    (if-let [item (first (filter (fn [y] (= name (:name y))) (get-all-items this)))]
+  (item [this name]
+    (if-let [item (first (filter (fn [y] (= name (:name y))) (all-items this)))]
       item ;; item getter untested because didn't have items when wrote it
       (if (> (.indexOf ["myself" "me"] name) -1)
         player
