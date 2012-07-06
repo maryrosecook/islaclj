@@ -4,6 +4,12 @@
   (:use [isla.story])
   (:require [isla.story-utils :as story-utils]))
 
+(defn instantiate-with [type-name & args]
+  (let [basic-obj (story-utils/instantiate-type (get types type-name))]
+    (if (> (count args) 1)
+      (apply assoc basic-obj args)
+      basic-obj)))
+
 ;; story creation
 
 (deftest test-room-creation
