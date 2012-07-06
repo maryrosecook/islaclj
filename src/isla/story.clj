@@ -16,11 +16,20 @@
 (def player-defaults ["" "" :undefined])
 
 
+(defprotocol QueryableRoom
+  (connected-rooms [this story]))
+
 (defprotocol QueryableStory
   (all-items [this])
   (item [this name]))
 
 (defprotocol Playable
+(def room-defaults ["" "" [] :undefined])
+(defrecord Room [name summary items exit]
+  QueryableRoom
+  (connected-rooms [this story]
+    (set (conj (filter (fn [x] (= this (:exit x))) (:rooms story))
+               (:exit this)))))
 
 (defrecord Story [player rooms]
   QueryableStory
@@ -45,8 +54,6 @@
 
 
 
-(defrecord Room [name summary items exit])
-(def room-defaults ["" "" [] :undefined])
 
 (defn init-story [story-str]
   (let [raw-env (interpreter/interpret
