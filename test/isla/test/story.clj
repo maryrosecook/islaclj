@@ -59,6 +59,18 @@
     (is (= (:out (run-command story "look at myself"))
            summary))))
 
+;; connected-rooms
+
+(deftest test-get-rooms-connected-in-reverse-direction
+  (let [story-str (str "palace is a room
+                        garden is a room
+                        palace exit is garden
+                        my room is garden")
+        story (init-story story-str)
+        result (run-command story "go into palace")]
+    (is (re-find #"You are in the palace" (:out result)))
+    (is (:name (:room (:player (:sto result)))) "palace")))
+
 ;; go
 
 (deftest test-moving-between-rooms
