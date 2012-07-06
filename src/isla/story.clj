@@ -47,17 +47,13 @@
 (def room-defaults ["" "" [] :undefined])
 
 (defn init-story [story-str]
-  (let [env (interpreter/interpret
-             (parser/parse story-str)
-             (library/get-initial-env types (get-story-ctx)))
   (let [raw-env (interpreter/interpret
                  (parser/parse story-str)
                  (library/get-initial-env types (get-story-ctx)))
         env (assoc raw-env :ctx (name-into-objs (:ctx raw-env)))
         ctx (interpreter/resolve- (:ctx env) env)
 
-        rooms (seq-to-hash (name-into-objs
-                            (extract-by-class ctx (:type (get types "room")))) :name)
+        rooms (extract-by-class ctx (:type (get types "room")))
         player (val (first (extract-by-class ctx (:type (get types "_player")))))]
     (Story. player rooms)))
 
