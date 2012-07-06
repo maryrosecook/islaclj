@@ -43,6 +43,8 @@
 
 ;; story
 
+(def story (ref nil))
+
 (defmulti run-story-command (fn [command expr] command))
 
 (defmethod run-story-command "hear" [command expr]
@@ -51,14 +53,13 @@
   (if-let [story-name (second (str/split expr #" "))]
     (let [file-path (str/lower-case (str "stories/" story-name ".is"))
           story-str (slurp file-path)]
-      (println "wooot")
-      (def story (story/init-story story-str))
-      (println story)
-      (pprint story)
+      (dosync (ref-set story (story/init-story story-str)))
       "Are you sitting comfortably? Then, we shall begin.")
     (throw (Exception. "You must specify the name of the story you want to load."))))
 
 (defmethod run-story-command :default [command expr] ;; normal command
   (if (nil? story)
     (throw (Exception. "Type 'hear --story--' to begin."))
-    (story/run-command story expr)))
+    (let [result (story/run-command (deref story) expr)]
+      (dosync (ref-set story (:sto result)))
+      (:out result))))
