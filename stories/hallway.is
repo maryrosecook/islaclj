@@ -1,4 +1,11 @@
 my name is 'Mary'
-my summary is 'You are a young boy.  You have dirty blonde hair.  You have no shoes on.'
+my summary is 'You are a young boy.  You have no shoes on.'
+
 hallway is a room
-hallway summary is 'You are in a dark hallway. A flight of stairs ascends in front of you.  You hear a girl crying. Someone says, Hello, I have been waiting.'
+hallway summary is 'You are in a dark hallway. You hear a girl crying.'
+
+garden is a room
+garden summary is 'You see a girl crying.'
+hallway exit is garden
+
+my room is hallway
