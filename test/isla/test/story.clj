@@ -58,3 +58,29 @@
         story (init-story story-str)]
     (is (= (run-command story "look at myself")
            summary))))
+
+;; go
+
+(deftest test-moving-between-rooms
+  (let [story-str (str "palace is a room
+                        garden is a room
+                        palace exit is garden
+                        my room is palace")
+        story (init-story story-str)
+        result (run-command story "go into garden")]
+    (is (re-find #"You are in the garden" (:out result)))
+    (is (:name (:room (:player (:sto result)))) "garden")))
+
+(deftest test-trying-to-move-to-unconnected-room
+  (let [story-str (str "palace is a room\ngarden is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "go into garden")]
+    (is (re-find #"You cannot go into the garden" (:out result)))
+    (is (= story (:sto result)))))
+
+(deftest test-trying-to-move-to-non-existent-room
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "go into garden")]
+    (is (re-find #"You cannot go into the garden" (:out result)))
+    (is (= story (:sto result)))))
