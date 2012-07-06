@@ -25,6 +25,7 @@
   (item [this name]))
 
 (defprotocol Playable
+  (go [this arguments-str])
   (look [this arguments-str]))
 
 (def room-defaults ["" "" [] :undefined])
@@ -46,6 +47,16 @@
         nil)))
 
   Playable
+  (go [this arguments-str]
+    (let [arguments (extract-arguments arguments-str)]
+      (if (= "into" (first arguments))
+        (let [name (second arguments)]
+          (if (some #{name} (map (fn [x] (:name x))
+                                 (connected-rooms (:room player) this)))
+            (creturn
+             (assoc this :player (assoc player :room (get rooms name)))
+             (str "You are in the " name))
+            (creturn this (str "You cannot go into the " name)))))))
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]
       (if (empty? arguments)
