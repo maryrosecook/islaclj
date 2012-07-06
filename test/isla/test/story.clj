@@ -41,7 +41,7 @@
            (instantiate-with "room" :name "palace"
                              :exit (instantiate-with "room" :name "garden"))))))
 
-;; story telling
+;; look
 
 (deftest test-look-general
   (let [summary "The floors are made of marble."
