@@ -36,9 +36,8 @@
 (def isla-env (ref (library/get-initial-env)))
 
 (defn run-isla-code [code]
-  (let [return
-        (interpret (first (:c (first (:c (isla.parser/parse code)))))
-                   (deref isla-env))]
+  (let [return (interpret (first (:c (first (:c (isla.parser/parse code)))))
+                          (deref isla-env))]
     (dosync (ref-set isla-env return))
     (:ret return)))
 
