@@ -22,8 +22,8 @@
       (javascript-tag
        (str "mode = '" mode "';"))]]]))
 
-(defpage "/story" []
-  (repl-html "story" "Story time with Isla"))
+(defpage "/storytime" []
+  (repl-html "story" "Storytime"))
 
 (defpage "/code" []
   (repl-html "isla" "Try Isla"))
