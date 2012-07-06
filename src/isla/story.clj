@@ -9,7 +9,6 @@
 
 (declare types name-into-objs extract-by-class get-story-ctx seq-to-hash resolve-)
 
-(defprotocol Queryable
   (get-all-items [this])
   (get-item [this name]))
 (defrecord Monster [name summary])
@@ -19,12 +18,13 @@
 (def player-defaults ["" "" :undefined])
 
 
+(defprotocol QueryableStory
 
 (defprotocol Playable
 
 (defrecord Story [player rooms]
-  Queryable
   (get-all-items [this]
+  QueryableStory
     (concat (map (fn [x] (:items x)) rooms)))
   (get-item [this name]
     (if-let [item (first (filter (fn [y] (= name (:name y))) (get-all-items this)))]
