@@ -55,8 +55,8 @@
                                  (connected-rooms (:room player) this)))
             (creturn
              (assoc this :player (assoc player :room (get rooms name)))
-             (str "You are in the " name "."))
             (creturn this (str "You cannot go into the " name ".")))))))
+             (t/room-intro room))
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]
       (if (empty? arguments)
