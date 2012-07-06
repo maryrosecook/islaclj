@@ -83,6 +83,10 @@
 
 (defn seq-to-hash [seq- key-]
   (reduce (fn [hash el] (assoc hash (key- el) el)) {} seq-))
+(defn tuples-to-hash [seq-]
+  (reduce (fn [hash el] (assoc hash (get el 0) (get el 1)))
+          {}
+          seq-))
 
 (def types
   {
