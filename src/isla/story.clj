@@ -60,10 +60,10 @@
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]
       (if (empty? arguments)
-        (:summary (get player :room))
+        (creturn this (:summary (get player :room)))
         (if (= "at" (first arguments))
           (if-let [item (item this (second arguments))]
-            (:summary item)))))))
+            (creturn this (:summary item))))))))
 
 (defn init-story [story-str]
   (let [raw-env (interpreter/interpret
