@@ -14,8 +14,6 @@
   (get-item [this name]))
 
 (defprotocol Playable
-  ;; (move [this arguments])
-  (look [this arguments]))
 
 (defrecord Story [player rooms]
   Queryable
@@ -29,8 +27,6 @@
         nil)))
 
   Playable
-  ;; (move [this arguments]
-  ;;   (println "move!"))
   (look [this arguments]
     (if (nil? arguments)
       (:summary (get player :room))
