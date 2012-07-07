@@ -33,8 +33,10 @@
 (defrecord Room [name summary items exit]
   QueryableRoom
   (connected-rooms [this story]
-    (set (conj (filter (fn [x] (= this (:exit x))) (vals (:rooms story)))
-               (:exit this)))))
+    (let [this-as-exits (filter (fn [x] (= this (:exit x))) (vals (:rooms story)))]
+      (if (not= :undefined (:exit this))
+        (conj this-as-exits (:exit this))
+        this-as-exits))))
 
 (defrecord Story [player rooms]
   QueryableStory
