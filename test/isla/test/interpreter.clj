@@ -115,5 +115,27 @@
 
 (deftest test-extract-way-deep-identifier-tag
   (let [ast (parse "isla is a person")]
+    (pprint ast)
     (is (= (extract ast [:c 0 :c 0 :c 0
                          :c 0 :c 0 :c 0 :tag]) :identifier))))
+;; lists
+
+(deftest test-instantiate-list
+  (let [env (interpret (parse "items is a list")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env)
+           (new isla.user.IList [])))))
+
+(deftest test-add-list
+  (let [env (interpret (parse "items is a list\nitems add 'sword'")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env)
+           (new isla.user.IList ["sword"])))))
+
+(deftest test-unknown-list-add-causes-exception
+  (try
+    (interpret (parse "items add 'sword'")
+               (library/get-initial-env extra-types))
+    (is false) ;; should not get called
+    (catch Exception e
+      (is (= (.getMessage e) "I do not know of a list called items.")))))

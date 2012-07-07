@@ -149,3 +149,22 @@
                                [{:invocation
                                  [{:identifier ["write"]}
                                   {:value [{:literal [{:string ["My name Isla"]}]}]}]}]}]}]}))
+
+;; lists
+
+(deftest test-list-instantiation
+  (let [expected-ast {:root [{:block [{:expression
+                                      [{:type-assignment
+                                        [{:assignee [{:assignee-scalar [{:identifier ["items"]}]}]}
+                                         {:is-a [:is-a]}
+                                         {:identifier ["list"]}]}]}]}]}]
+    (check-ast (parse "items is a list") expected-ast)))
+
+(deftest test-list-add
+  (let [expected-ast {:root [{:block [{:expression
+                                      [{:list-assignment
+                                        [{:assignee [{:assignee-scalar [{:identifier ["items"]}]}]}
+                                         {:list-operation [{:add [:add]}]}
+                                         {:value [{:identifier ["sword"]}]}]}]}]}]}]
+    (check-ast (parse "items add sword") expected-ast)))
+
