@@ -3,10 +3,12 @@
   (:require [clojure.string :as str])
   (:require [mrc.utils :as utils]))
 
-(defn room-intro [room]
 (declare list-rooms)
+
+(defn room-intro [room connected-rooms]
   (str "You are in the " (:name room) ". "
-       (:summary room)))
+       (:summary room) " "
+       "You can see doors leading to " (list-rooms connected-rooms)))
 
 (defn room-already [name] (str "You are already in the " name "."))
 (defn room-not-allowed [name] (str "You cannot go into the " name "."))
