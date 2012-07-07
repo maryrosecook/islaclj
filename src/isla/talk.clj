@@ -15,7 +15,7 @@
 
 (defmulti list-rooms (fn [rooms] (count rooms)))
 (defmethod list-rooms 0 [rooms] "There is no way out of this room.")
-(defmethod list-rooms 1 [rooms] (str "You can see a door to the " (:name (first rooms))))
+(defmethod list-rooms 1 [rooms] (str "You can see a door to the " (:name (first rooms)) "."))
 (defmethod list-rooms :default [rooms]
   (let [all-room-list (reduce (fn [string x]
                                 (str string ", the " (:name x)))
