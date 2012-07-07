@@ -53,7 +53,9 @@
     (let [file-path (str/lower-case (str "stories/" story-name ".is"))
           story-str (slurp file-path)]
       (dosync (ref-set story (story/init-story story-str)))
-      (t/room-intro (:room (:player (deref story)))))
+      (let [player (:player (deref story))
+            conn-rooms (story/connected-rooms (:room player) (deref story))]
+        (t/room-intro (:room player) conn-rooms)))
     (throw (Exception. "You must specify the name of the story you want to load."))))
 
 (defmethod run-story-command :default [command expr] ;; normal command
