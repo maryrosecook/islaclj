@@ -8,7 +8,8 @@
          pattern-sequence-selector one-token-pattern
          -root -block -expression -type-assignment -value-assignment -invocation
          -nl -integer -is-a -is -string -assignee -value -identifier
-         -assignee-scalar -assignee-object -literal)
+         -assignee-scalar -assignee-object -literal -add -list-assignment
+         -list-operation)
 
 (defn parse [code]
   (-root (lex code)))
@@ -22,12 +23,12 @@
     (-block left-tokens (conj collected node)) ;; add expr, continue collecting more
     (if (= 0 (count tokens))
       (nnode :block collected) ;; no more exprs, all tokens used, return block
-      (throw (Exception. (str "Got lost at: " tokens)))))) ;; tokens remaining - throw
+      (throw (Exception. (str "Got lost at: " (vec tokens))))))) ;; tokens remaining - throw
 
 ;; expressions
 
 (defn -expression [tokens collected]
-  (pattern-sequence-selector tokens [-type-assignment -value-assignment -invocation]
+  (pattern-sequence-selector tokens [-type-assignment -value-assignment -list-assignment -invocation]
                              :expression))
 
 (defn -type-assignment [tokens]
@@ -42,10 +43,23 @@
     {:node (nnode :value-assignment (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
+(defn -list-assignment [tokens]
+  (if-let [{nodes :nodes left-tokens :left-tokens}
+           (pattern-sequence tokens [-assignee -list-operation -value -nl] [])]
+    {:node (nnode :list-assignment (take 3 nodes)) :left-tokens left-tokens}
+    nil))
+
 (defn -invocation [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
            (pattern-sequence tokens [-identifier -value -nl] [])]
     {:node (nnode :invocation (take 2 nodes)) :left-tokens left-tokens}
+    nil))
+
+(defn -list-operation [tokens]
+  (if-let [{node :node left-tokens :left-tokens}
+           (pattern-sequence-selector tokens [-add] :list-operation)]
+    (let []
+      {:node node :left-tokens left-tokens})
     nil))
 
 ;; atoms
@@ -60,6 +74,9 @@
 
 (defn -is [tokens]
   (one-token-pattern tokens #"is" :is (fn [x] [:is])))
+
+(defn -add [tokens]
+  (one-token-pattern tokens #"add" :add (fn [x] [:add])))
 
 ;; values
 
@@ -81,7 +98,7 @@
     {:node (nnode :assignee-object (take 2 nodes)) :left-tokens left-tokens}
     nil))
 
-(defn -identifier [tokens] (one-token-pattern tokens #"(?!^is$)[A-Za-z]+" :identifier))
+(defn -identifier [tokens] (one-token-pattern tokens #"(?!^(is|add)$)[A-Za-z]+" :identifier))
 
 (defn -literal [tokens]
   (pattern-sequence-selector tokens [-integer -string] :literal))
