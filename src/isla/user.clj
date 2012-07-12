@@ -3,7 +3,7 @@
 (defrecord Instrument [sound awesomeness])
 (def instrument-defaults ["" ""])
 
-(defrecord IList [initial-list])
+(defrecord IList [list])
 (def list-defaults [[]])
 
 (def types
