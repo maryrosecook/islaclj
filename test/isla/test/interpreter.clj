@@ -115,7 +115,6 @@
 
 (deftest test-extract-way-deep-identifier-tag
   (let [ast (parse "isla is a person")]
-    (pprint ast)
     (is (= (extract ast [:c 0 :c 0 :c 0
                          :c 0 :c 0 :c 0 :tag]) :identifier))))
 ;; lists
