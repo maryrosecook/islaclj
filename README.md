@@ -37,8 +37,8 @@ Navigate to `http://localhost:8801/code`
 Enter commands into the REPL.  Valid expressions, so far:
 
     age is 1
-    guitar is a instrument
-    guitar sound is 'rarrrrrrrrrrrrowwrrrrrrrrrrrrr'
+    garden is a room
+    garden summary is 'A bird chirrups.'
 
 ### Run the tests
 
