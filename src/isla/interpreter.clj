@@ -34,8 +34,8 @@
 (defmethod interpret :type-assignment [node env]
   (let [assignee (extract node [:c 0])
         type-identifier (interpret (extract node [:c 2]) env)]
-    (if-let [type-hash (get (:types (:ctx env)) type-identifier)]
-      (let [new-ctx (assign (:ctx env) assignee (story-utils/instantiate-type type-hash))]
+    (if-let [type-fn (get (:types (:ctx env)) type-identifier)]
+      (let [new-ctx (assign (:ctx env) assignee (type-fn))]
         (nreturn new-ctx))
       (utils/thr (str "I do not know what a " type-identifier " is.")))))
 

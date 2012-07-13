@@ -12,11 +12,8 @@
          extract-arguments creturn)
 
 (defrecord Monster [name summary])
-(def monster-defaults ["" ""])
 
 (defrecord Player [name summary room])
-(def player-defaults ["" "" :undefined])
-
 
 (defprotocol QueryableRoom
   (connected-rooms [this story]))
@@ -29,7 +26,6 @@
   (go [this arguments-str])
   (look [this arguments-str]))
 
-(def room-defaults ["" "" [] :undefined])
 (defrecord Room [name summary items exit]
   QueryableRoom
   (connected-rooms [this story]
@@ -95,7 +91,7 @@
     (str/split arguments #" ")))
 
 (defn get-story-ctx []
-  {"my" (story-utils/instantiate-type (get types "_player"))})
+  {"my" ((get types "_player"))})
 
 (defn name-into-objs [objs]
   (tuples-to-hash (map (fn [{k 0 v 1}]
@@ -120,7 +116,7 @@
 
 (def types
   {
-   "monster" {:type isla.story.Monster :defaults monster-defaults}
-   "room" {:type isla.story.Room :defaults room-defaults}
-   "_player" {:type isla.story.Player :defaults player-defaults}
+   "monster" (fn [] (new isla.story.Monster "" ""))
+   "room" (fn [] (new isla.story.Room "" "" [] :undefined))
+   "_player" (fn [] (new isla.story.Player "" "" :undefined))
    })

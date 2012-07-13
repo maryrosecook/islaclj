@@ -1,11 +1,10 @@
 (ns isla.test.story
   (:use [clojure.test])
   (:use [clojure.pprint])
-  (:use [isla.story])
-  (:require [isla.story-utils :as story-utils]))
+  (:use [isla.story]))
 
 (defn instantiate-with [type-name & args]
-  (let [basic-obj (story-utils/instantiate-type (get types type-name))]
+  (let [basic-obj ((get types type-name))]
     (if (> (count args) 1)
       (apply assoc basic-obj args)
       basic-obj)))

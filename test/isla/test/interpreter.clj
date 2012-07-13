@@ -6,10 +6,9 @@
   (:use [clojure.test])
   (:use [clojure.pprint]))
 
+(defrecord Person [age name friend])
 (def extra-types
-  {"person"
-   {:type (defrecord Person [age name friend])
-    :defaults [0 "" :undefined]}})
+  {"person" (fn [] (new isla.test.interpreter.Person 0 "" :undefined))})
 
 ;; non-slot assignment
 
