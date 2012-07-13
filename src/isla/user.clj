@@ -1,8 +1,5 @@
 (ns isla.user)
 
-(defrecord Instrument [sound awesomeness])
-(def instrument-defaults ["" ""])
-
 (defrecord IList [list])
 (def list-defaults [[]])
 
