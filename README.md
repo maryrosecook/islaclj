@@ -2,7 +2,11 @@
 
 A programming language for young children.
 
-# Quick start
+## Language guide
+
+https://github.com/maryrosecook/isla/blob/master/languageguide.md
+
+## Quick start
 
 ### Setup
 
