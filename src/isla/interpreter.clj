@@ -45,7 +45,7 @@
     (if (nil? assignee)
       (utils/thr (str "I do not know of a list called " assignee-name "."))
       (let [operation (extract node [:c 1 :c 0 :tag])
-            value (extract node [:c 2 :c 0 :c 0 :c 0])]
+            value (:val (interpret (extract node [:c 2]) env))]
         (if (= :add operation)
           (assoc env :ctx (assoc (:ctx env) assignee-name (conj assignee value))))))))
 

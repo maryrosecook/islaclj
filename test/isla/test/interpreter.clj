@@ -135,3 +135,19 @@
     (is false) ;; should not get called
     (catch Exception e
       (is (= (.getMessage e) "I do not know of a list called items.")))))
+
+(deftest test-add-duplicate-item-does-nothing-string
+  (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems add 'sword'")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{"sword"}))))
+
+(deftest test-add-duplicate-item-does-nothing-integer
+  (let [env (interpret (parse "items is a list\nitems add 1\nitems add 1")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{1}))))
+
+(deftest test-add-duplicate-item-does-nothing-obj
+  (let [env (interpret (parse "mary is a person\nitems is a list
+                               items add mary\nitems add mary")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{((get extra-types "person"))}))))
