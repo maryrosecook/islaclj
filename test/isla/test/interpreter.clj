@@ -4,7 +4,8 @@
   (:use [isla.user])
   (:require [isla.library :as library])
   (:use [clojure.test])
-  (:use [clojure.pprint]))
+  (:use [clojure.pprint])
+  (:require [mrc.utils :as utils]))
 
 (defrecord Person [age name friend])
 (def extra-types
@@ -105,16 +106,16 @@
 
 (deftest test-extract-block-tag
   (let [ast (parse "isla is a person")]
-    (is (= (extract ast [:c 0 :tag]) :block))))
+    (is (= (utils/extract ast [:c 0 :tag]) :block))))
 
 (deftest test-extract-way-deep-assignee-scalar-name
   (let [ast (parse "isla is a person")]
-    (is (= (extract ast [:c 0 :c 0 :c 0
+    (is (= (utils/extract ast [:c 0 :c 0 :c 0
                          :c 0 :c 0 :c 0 :c 0]) "isla"))))
 
 (deftest test-extract-way-deep-identifier-tag
   (let [ast (parse "isla is a person")]
-    (is (= (extract ast [:c 0 :c 0 :c 0
+    (is (= (utils/extract ast [:c 0 :c 0 :c 0
                          :c 0 :c 0 :c 0 :tag]) :identifier))))
 ;; lists
 
