@@ -121,14 +121,12 @@
 (deftest test-instantiate-list
   (let [env (interpret (parse "items is a list")
                        (library/get-initial-env extra-types))]
-    (is (= (resolve- {:ref "items"} env)
-           (new isla.user.IList [])))))
+    (is (= (resolve- {:ref "items"} env) #{}))))
 
 (deftest test-add-list
   (let [env (interpret (parse "items is a list\nitems add 'sword'")
                        (library/get-initial-env extra-types))]
-    (is (= (resolve- {:ref "items"} env)
-           (new isla.user.IList ["sword"])))))
+    (is (= (resolve- {:ref "items"} env) #{"sword"}))))
 
 (deftest test-unknown-list-add-causes-exception
   (try

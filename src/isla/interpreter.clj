@@ -44,11 +44,10 @@
         assignee (resolve- {:ref assignee-name} env)]
     (if (nil? assignee)
       (utils/thr (str "I do not know of a list called " assignee-name "."))
-      (let [assignee-list (:list assignee)
-            operation (extract node [:c 1 :c 0 :tag])
+      (let [operation (extract node [:c 1 :c 0 :tag])
             value (extract node [:c 2 :c 0 :c 0 :c 0])]
         (if (= :add operation)
-         (assoc env :ctx (assoc (:ctx env) assignee-name (assoc assignee :list (conj assignee-list value)))))))))
+          (assoc env :ctx (assoc (:ctx env) assignee-name (conj assignee value))))))))
 
 (defmethod interpret :invocation [node env]
   (let [function (resolve- {:ref (interpret (extract node [:c 0]) env)} env)
