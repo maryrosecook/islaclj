@@ -75,8 +75,8 @@
         env (assoc raw-env :ctx (name-into-objs (:ctx raw-env)))
         ctx (interpreter/resolve- (:ctx env) env)
 
-        rooms (extract-by-class ctx (:type (get types "room")))
-        player (val (first (extract-by-class ctx (:type (get types "_player")))))]
+        rooms (extract-by-class ctx isla.story.Room)
+        player (val (first (extract-by-class ctx isla.story.Player)))]
     (Story. player rooms)))
 
 (defn run-command [story command-str]
