@@ -104,7 +104,7 @@
   (pattern-sequence-selector tokens [-integer -string] :literal))
 
 (defn -integer [tokens]
-  (one-token-pattern tokens #"[0-9]+" :integer
+  (one-token-pattern tokens #"[1-9][0-9]*" :integer
                      (fn [x] [(Integer/parseInt (first tokens))])))
 
 (defn -string [tokens]

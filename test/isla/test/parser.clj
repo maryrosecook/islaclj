@@ -1,7 +1,8 @@
 (ns isla.test.parser
   (:use [isla.parser])
   (:use [clojure.test])
-  (:use [clojure.pprint]))
+  (:use [clojure.pprint])
+  (:require [mrc.utils :as utils]))
 
 (defmulti check-ast (fn [_ expected] (class expected)))
 
@@ -57,6 +58,23 @@
                                   {:is-a [:is-a]}
                                   {:identifier ["person"]}]}]}]}]}))
 
+
+;; integers
+
+(deftest test-single-digit-integer
+  (= (utils/extract (parse "mary is 1") [:c 0 :c 0 :c 0 :c 2 :c 0 :c 0 :c 0])
+     1))
+
+(deftest test-multiple-digit-integer
+  (= (utils/extract (parse "mary is 12345") [:c 0 :c 0 :c 0 :c 2 :c 0 :c 0 :c 0])
+     12345))
+
+(deftest test-integer-cannot-start-with-zero
+  (try
+    (parse "mary is 02345")
+    (is false) ;; shouldn't get called
+    (catch Exception e
+      (is (re-find #"Got lost at" (.getMessage e))))))
 
 ;; assignment to primitive variable
 
@@ -167,4 +185,3 @@
                                          {:list-operation [{:add [:add]}]}
                                          {:value [{:identifier ["sword"]}]}]}]}]}]}]
     (check-ast (parse "items add sword") expected-ast)))
-
