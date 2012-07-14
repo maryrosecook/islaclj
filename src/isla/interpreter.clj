@@ -82,10 +82,10 @@
 
 (defmulti assign (fn [_ assignee-node _] (utils/extract assignee-node [:c 0 :tag])))
 
-(defmethod assign :assignee-scalar [ctx assignee-node value]
+(defmethod assign :scalar [ctx assignee-node value]
   (assoc ctx (utils/extract assignee-node [:c 0 :c 0 :c 0]) value))
 
-(defmethod assign :assignee-object [ctx assignee-node value]
+(defmethod assign :object [ctx assignee-node value]
   (let [object-name (utils/extract assignee-node [:c 0 :c 0 :c 0])
         slot-name-str (utils/extract assignee-node [:c 0 :c 1 :c 0])
         current-slot-value (get (get ctx object-name) (keyword slot-name-str))]

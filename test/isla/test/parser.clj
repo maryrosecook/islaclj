@@ -30,7 +30,7 @@
   (check-ast (parse "isla age is 1")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-object
+                                 [{:assignee [{:object
                                                [{:identifier ["isla"]}
                                                 {:identifier ["age"]}]}]}
                                   {:is [:is]}
@@ -42,7 +42,7 @@
   (check-ast (parse "mary is a girl")
              {:root [{:block [{:expression
                                [{:type-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["mary"]}]}]}
                                   {:is-a [:is-a]}
                                   {:identifier ["girl"]}]}]}]}]}))
 
@@ -52,7 +52,7 @@
   (check-ast (parse "mary friend is a person")
              {:root [{:block [{:expression
                                [{:type-assignment
-                                 [{:assignee [{:assignee-object
+                                 [{:assignee [{:object
                                                [{:identifier ["mary"]}
                                                 {:identifier ["friend"]}]}]}
                                   {:is-a [:is-a]}
@@ -82,7 +82,7 @@
   (check-ast (parse "mary is 1")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["mary"]}]}]}
                                   {:is [:is]}
                                   {:value [{:literal [{:integer [1]}]}]}]}]}]}]}))
 
@@ -90,7 +90,7 @@
   (check-ast (parse "isla is age")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["isla"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["isla"]}]}]}
                                   {:is [:is]}
                                   {:value [{:identifier ["age"]}]}]}]}]}]}))
 
@@ -98,7 +98,7 @@
   (check-ast (parse "isla is 'cool'")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["isla"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["isla"]}]}]}
                                   {:is [:is]}
                                   {:value [{:literal [{:string ["cool"]}]}]}]}]}]}]}))
 
@@ -108,12 +108,12 @@
   (check-ast (parse "isla is 1\nmary is 2")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["isla"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["isla"]}]}]}
                                   {:is [:is]}
                                   {:value [{:literal [{:integer [1]}]}]}]}]}
                               {:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["mary"]}]}]}
                                   {:is [:is]}
                                   {:value [{:literal [{:integer [2]}]}]}]}]}]}]}))
 
@@ -121,7 +121,7 @@
   (check-ast (parse "name is 'Isla'\nwrite 'la'\nwrite name")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["name"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["name"]}]}]}
                                   {:is [:is]}
                                   {:value [{:literal [{:string ["Isla"]}]}]}]}]}
                               {:expression
@@ -138,12 +138,12 @@
   (check-ast (parse "name is 'Isla'\nmary is a girl\nwrite name")
              {:root [{:block [{:expression
                                [{:value-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["name"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["name"]}]}]}
                                   {:is [:is]}
                                   {:value [{:literal [{:string ["Isla"]}]}]}]}]}
                               {:expression
                                [{:type-assignment
-                                 [{:assignee [{:assignee-scalar [{:identifier ["mary"]}]}]}
+                                 [{:assignee [{:scalar [{:identifier ["mary"]}]}]}
                                   {:is-a [:is-a]}
                                   {:identifier ["girl"]}]}]}
                               {:expression
@@ -154,12 +154,19 @@
 
 ;; invocation
 
-(deftest invoke-fn-one-param
+(deftest invoke-fn-scalar-param
   (check-ast (parse "write 'isla'")
              {:root [{:block [{:expression
                                [{:invocation
                                  [{:identifier ["write"]}
                                   {:value [{:literal [{:string ["isla"]}]}]}]}]}]}]}))
+
+;; (deftest invoke-fn-object-attribute-param
+;;   (check-ast (parse "write mary age")
+;;              {:root [{:block [{:expression
+;;                                [{:invocation
+;;                                  [{:identifier ["write"]}
+;;                                   {:value [{:literal [{:string ["isla"]}]}]}]}]}]}]}))
 
 (deftest test-write-string-regression
   (check-ast (parse "write 'My name Isla'")
@@ -173,7 +180,7 @@
 (deftest test-list-instantiation
   (let [expected-ast {:root [{:block [{:expression
                                       [{:type-assignment
-                                        [{:assignee [{:assignee-scalar [{:identifier ["items"]}]}]}
+                                        [{:assignee [{:scalar [{:identifier ["items"]}]}]}
                                          {:is-a [:is-a]}
                                          {:identifier ["list"]}]}]}]}]}]
     (check-ast (parse "items is a list") expected-ast)))
@@ -181,7 +188,7 @@
 (deftest test-list-add
   (let [expected-ast {:root [{:block [{:expression
                                       [{:list-assignment
-                                        [{:assignee [{:assignee-scalar [{:identifier ["items"]}]}]}
+                                        [{:assignee [{:scalar [{:identifier ["items"]}]}]}
                                          {:list-operation [{:add [:add]}]}
                                          {:value [{:identifier ["sword"]}]}]}]}]}]}]
     (check-ast (parse "items add sword") expected-ast)))
@@ -189,7 +196,7 @@
 (deftest test-list-remove
   (let [expected-ast {:root [{:block [{:expression
                                       [{:list-assignment
-                                        [{:assignee [{:assignee-scalar [{:identifier ["items"]}]}]}
+                                        [{:assignee [{:scalar [{:identifier ["items"]}]}]}
                                          {:list-operation [{:remove [:remove]}]}
                                          {:value [{:identifier ["sword"]}]}]}]}]}]}]
     (check-ast (parse "items remove sword") expected-ast)))
