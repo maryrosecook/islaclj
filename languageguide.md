@@ -130,8 +130,6 @@ Lists can contains any combination of integers, strings and objects.  Lists may 
     items is a list
     items remove 'bye'
 
-Removal has not, yet, been implemented.
-
 ##### Membership
 
     items has 'hi'
