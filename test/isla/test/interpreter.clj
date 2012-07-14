@@ -124,11 +124,6 @@
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{}))))
 
-(deftest test-add-list
-  (let [env (interpret (parse "items is a list\nitems add 'sword'")
-                       (library/get-initial-env extra-types))]
-    (is (= (resolve- {:ref "items"} env) #{"sword"}))))
-
 (deftest test-unknown-list-add-causes-exception
   (try
     (interpret (parse "items add 'sword'")
@@ -136,6 +131,13 @@
     (is false) ;; should not get called
     (catch Exception e
       (is (= (.getMessage e) "I do not know of a list called items.")))))
+
+;; list addition
+
+(deftest test-add-list
+  (let [env (interpret (parse "items is a list\nitems add 'sword'")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{"sword"}))))
 
 (deftest test-add-duplicate-item-does-nothing-string
   (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems add 'sword'")
@@ -152,3 +154,34 @@
                                items add mary\nitems add mary")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{((get extra-types "person"))}))))
+
+;; list removal
+
+(deftest test-remove-list
+  (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems remove 'sword'")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{}))))
+
+(deftest test-remove-obj-list
+  (let [env (interpret (parse "mary is a person\nitems is a list
+                               items add mary\nitems remove mary")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{}))))
+
+(deftest test-remove-non-existent-item-does-nothing-string
+  (let [env (interpret (parse "items is a list\nitems add 'a'\nitems remove 'b'")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{"a"}))))
+
+(deftest test-remove-non-existent-item-does-nothing-integer
+  (let [env (interpret (parse "items is a list\nitems add 1\nitems remove 2")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env) #{1}))))
+
+(deftest test-remove-non-existent-item-does-nothing-obj
+  (let [env (interpret (parse "mary is a person\nmary age is 1
+                               isla is a person\nitems is a list
+                               items add isla\nitems add mary\nitems remove mary")
+                       (library/get-initial-env extra-types))]
+    (is (= (resolve- {:ref "items"} env)
+           #{((get extra-types "person"))}))))

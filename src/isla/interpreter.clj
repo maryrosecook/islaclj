@@ -46,8 +46,11 @@
       (utils/thr (str "I do not know of a list called " assignee-name "."))
       (let [operation (utils/extract node [:c 1 :c 0 :tag])
             value (:val (interpret (utils/extract node [:c 2]) env))]
-        (if (= :add operation)
-          (assoc env :ctx (assoc (:ctx env) assignee-name (conj assignee value))))))))
+        (let [new-list (cond
+                        (= :add operation) (conj assignee value)
+                        (= :remove operation) (disj assignee value)
+                        :else (utils/thr (str "You cannot " operation " on lists.")))]
+          (assoc env :ctx (assoc (:ctx env) assignee-name new-list)))))))
 
 (defmethod interpret :invocation [node env]
   (let [function (resolve- {:ref (interpret (utils/extract node [:c 0]) env)} env)
