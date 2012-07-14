@@ -185,3 +185,11 @@
                                          {:list-operation [{:add [:add]}]}
                                          {:value [{:identifier ["sword"]}]}]}]}]}]}]
     (check-ast (parse "items add sword") expected-ast)))
+
+(deftest test-list-remove
+  (let [expected-ast {:root [{:block [{:expression
+                                      [{:list-assignment
+                                        [{:assignee [{:assignee-scalar [{:identifier ["items"]}]}]}
+                                         {:list-operation [{:remove [:remove]}]}
+                                         {:value [{:identifier ["sword"]}]}]}]}]}]}]
+    (check-ast (parse "items remove sword") expected-ast)))
