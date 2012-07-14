@@ -92,7 +92,8 @@
                                [{:value-assignment
                                  [{:assignee [{:scalar [{:identifier ["isla"]}]}]}
                                   {:is [:is]}
-                                  {:value [{:identifier ["age"]}]}]}]}]}]}))
+                                  {:value [{:variable [{:scalar
+                                                        [{:identifier ["age"]}]}]}]}]}]}]}]}))
 
 (deftest assignment-string
   (check-ast (parse "isla is 'cool'")
@@ -131,8 +132,8 @@
                               {:expression
                                [{:invocation
                                  [{:identifier ["write"]}
-                                  {:value [{:identifier ["name"]}]}]}]}
-                              ]}]}))
+                                  {:value [{:variable
+                                            [{:scalar [{:identifier ["name"]}]}]}]}]}]}]}]}))
 
 (deftest test-block-with-type-ass-and-value-ass
   (check-ast (parse "name is 'Isla'\nmary is a girl\nwrite name")
@@ -149,10 +150,18 @@
                               {:expression
                                [{:invocation
                                  [{:identifier ["write"]}
-                                  {:value [{:identifier ["name"]}]}]}]}
-                              ]}]}))
+                                  {:value [{:variable
+                                            [{:scalar [{:identifier ["name"]}]}]}]}]}]}]}]}))
 
 ;; invocation
+
+(deftest invoke-fn-scalar-variable
+  (check-ast (parse "write isla")
+             {:root [{:block [{:expression
+                               [{:invocation
+                                 [{:identifier ["write"]}
+                                  {:value [{:variable [{:scalar
+                                                        [{:identifier ["isla"]}]}]}]}]}]}]}]}))
 
 (deftest invoke-fn-scalar-param
   (check-ast (parse "write 'isla'")
@@ -161,12 +170,14 @@
                                  [{:identifier ["write"]}
                                   {:value [{:literal [{:string ["isla"]}]}]}]}]}]}]}))
 
-;; (deftest invoke-fn-object-attribute-param
-;;   (check-ast (parse "write mary age")
-;;              {:root [{:block [{:expression
-;;                                [{:invocation
-;;                                  [{:identifier ["write"]}
-;;                                   {:value [{:literal [{:string ["isla"]}]}]}]}]}]}]}))
+(deftest invoke-fn-object-attribute-variable
+  (check-ast (parse "write isla age")
+             {:root [{:block [{:expression
+                               [{:invocation
+                                 [{:identifier ["write"]}
+                                  {:value [{:variable [{:object
+                                                        [{:identifier ["isla"]}
+                                                         {:identifier ["age"]}]}]}]}]}]}]}]}))
 
 (deftest test-write-string-regression
   (check-ast (parse "write 'My name Isla'")
@@ -190,7 +201,9 @@
                                       [{:list-assignment
                                         [{:assignee [{:scalar [{:identifier ["items"]}]}]}
                                          {:list-operation [{:add [:add]}]}
-                                         {:value [{:identifier ["sword"]}]}]}]}]}]}]
+                                         {:value [{:variable
+                                                   [{:scalar
+                                                     [{:identifier ["sword"]}]}]}]}]}]}]}]}]
     (check-ast (parse "items add sword") expected-ast)))
 
 (deftest test-list-remove
@@ -198,5 +211,7 @@
                                       [{:list-assignment
                                         [{:assignee [{:scalar [{:identifier ["items"]}]}]}
                                          {:list-operation [{:remove [:remove]}]}
-                                         {:value [{:identifier ["sword"]}]}]}]}]}]}]
+                                         {:value [{:variable
+                                                   [{:scalar
+                                                     [{:identifier ["sword"]}]}]}]}]}]}]}]}]
     (check-ast (parse "items remove sword") expected-ast)))
