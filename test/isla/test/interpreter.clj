@@ -56,6 +56,15 @@
   (let [result (interpret (parse "name is 'mary'\nwrite name"))]
     (is (= (:ret result) "mary"))))
 
+(deftest test-invoking-with-variable-param
+  (let [result (interpret (parse "age is 1\nwrite age"))]
+    (is (= (:ret result) 1))))
+
+(deftest test-invoking-with-object-param
+  (let [result (interpret (parse "mary is a person\nmary age is 2\nwrite mary age")
+                          (library/get-initial-env extra-types))]
+    (is (= (:ret result) 2))))
+
 ;; type assignment
 
 (deftest test-type-assignment
