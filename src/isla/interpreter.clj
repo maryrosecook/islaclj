@@ -59,25 +59,16 @@
       (nreturn (:ctx env) return-val))))
 
 (defmethod interpret :value [node env]
-  (let [sub-node (utils/extract node [:c 0])]
-    (if (= :identifier (:tag sub-node))
-      (let [ref (interpret sub-node env)]
-        {:ref ref :val (resolve- {:ref ref} env)})
-      {:val (interpret sub-node env)})))
+  (evaluate (utils/extract node [:c 0]) env))
 
-(defmethod interpret :literal [node env]
-  (interpret (utils/extract node [:c 0]) env))
 (defmulti evaluate (fn [node _] (:tag node)))
 
-(defmethod interpret :identifier [node _]
-  (utils/extract node [:c 0]))
 (defmethod evaluate :literal [node env]
   {:val (interpret (utils/extract node [:c 0]) env)})
 
 (defmethod evaluate :variable [node env]
   (evaluate (utils/extract node [:c 0]) env))
 
-(defmethod interpret :assignee [node _]
 (defmethod evaluate :scalar [node env]
   (let [ref (interpret (utils/extract node [:c 0]) env)]
     {:ref ref :val (resolve- {:ref ref} env)}))
@@ -88,6 +79,8 @@
     {:ref [object-identifier attribute-identifier] ;; not used now, but won't work if used
      :val (get (resolve- {:ref object-identifier} env)
                attribute-identifier)}))
+
+(defmethod interpret :identifier [node _]
   (utils/extract node [:c 0]))
 
 (defmethod interpret :integer [node _]
