@@ -47,18 +47,22 @@
 
   Playable
   (go [this arguments-str]
-    (let [arguments (extract-arguments arguments-str)]
+    (let [arguments (extract-arguments arguments-str)
+          connected-to-current-room (connected-rooms (:room player) this)]
       (if (= "into" (first arguments))
-        (let [name (second arguments)
-              room (get rooms name)]
-          (if (some #{name} (map (fn [x] (:name x))
-                                 (connected-rooms (:room player) this)))
-            (creturn
-             (assoc this :player (assoc player :room room))
-             (t/room-intro room (connected-rooms room this)))
-            (if (= name (:name (:room player)))
-              (creturn this (t/room-already name))
-              (creturn this (t/room-not-allowed name))))))))
+        (if (not= nil (second arguments))
+          (let [name (second arguments)
+                room (get rooms name)]
+            (if (some #{name} (map (fn [x] (:name x))
+                                   connected-to-current-room))
+              (creturn
+               (assoc this :player (assoc player :room room))
+               (t/room-intro room (connected-rooms room this)))
+              (if (= name (:name (:room player)))
+                (creturn this (t/room-already name))
+                (creturn this (t/room-not-allowed name)))))
+          (creturn this (t/go-instructions connected-to-current-room)))
+        (creturn this (t/go-instructions connected-to-current-room)))))
 
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]

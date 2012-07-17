@@ -10,6 +10,11 @@
        (:summary room) " "
        (list-rooms connected-rooms)))
 
+(defn go-instructions [connected-rooms]
+  (if (> (count connected-rooms) 0)
+    (str "Try saying 'go into " (:name (first connected-rooms)) "'.")
+    (str "You cannot go anywhere.")))
+
 (defn room-already [name] (str "You are already in the " name "."))
 (defn room-not-allowed [name] (str "You cannot go into the " name "."))
 

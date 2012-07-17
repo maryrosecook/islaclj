@@ -95,3 +95,18 @@
         result (run-command story "go into garden")]
     (is (re-find #"You cannot go into the garden" (:out result)))
     (is (= story (:sto result)))))
+
+(deftest test-just-typing-go-with-connected-room
+  (let [story-str (str "palace is a room\ngarden is a room\nmy room is palace
+                        palace exit is garden")
+        story (init-story story-str)
+        result (run-command story "go")]
+    (is (re-find #"Try saying 'go into garden'" (:out result)))
+    (is (= story (:sto result)))))
+
+(deftest test-just-typing-go-with-connected-room
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "go")]
+    (is (re-find #"You cannot go anywhere" (:out result)))
+    (is (= story (:sto result)))))
