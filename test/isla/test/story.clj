@@ -80,7 +80,7 @@
         story (init-story story-str)
         result (run-command story "go into garden")]
     (is (re-find #"You are in the garden" (:out result)))
-    (is (:name (:room (:player (:sto result)))) "garden")))
+    (is (-> result :sto :player :room :name) "garden")))
 
 (deftest test-trying-to-move-to-unconnected-room
   (let [story-str (str "palace is a room\ngarden is a room\nmy room is palace")
