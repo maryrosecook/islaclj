@@ -56,13 +56,13 @@
             (if (some #{name} (map (fn [x] (:name x))
                                    connected-to-current-room))
               (creturn
-               (assoc this :player (assoc player :room room))
                (t/room-intro room (connected-rooms room this)))
               (if (= name (:name (:room player)))
                 (creturn this (t/room-already name))
                 (creturn this (t/room-not-allowed name)))))
           (creturn this (t/go-instructions connected-to-current-room)))
         (creturn this (t/go-instructions connected-to-current-room)))))
+             (assoc-in this [:player :room] room)
 
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]

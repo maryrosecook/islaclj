@@ -50,7 +50,7 @@
                         (= :add operation) (conj assignee value)
                         (= :remove operation) (disj assignee value)
                         :else (utils/thr (str "You cannot " operation " on lists.")))]
-          (assoc env :ctx (assoc (:ctx env) assignee-name new-list)))))))
+          (assoc-in env [:ctx assignee-name] new-list))))))
 
 (defmethod interpret :invocation [node env]
   (let [function (resolve- {:ref (interpret (utils/extract node [:c 0]) env)} env)
@@ -101,7 +101,7 @@
     (if (nil? current-slot-value) ;; initial value of intended slot will never be nil
       (let [object-class (friendly-class (class (get ctx object-name)))]
         (utils/thr (str object-class "s do not have a " slot-name-str ".")))
-      (assoc ctx object-name (assoc (get ctx object-name) (keyword slot-name-str) value)))))
+      (assoc-in ctx [object-name (keyword slot-name-str)] value))))
 
 (defn nreturn
   ([ctx] {:ctx ctx :ret nil})
