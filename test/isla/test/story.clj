@@ -56,7 +56,7 @@
         story-str (str "my summary is '" summary "'")
         story (init-story story-str)]
     (is (= (:out (run-command story "look at myself"))
-           summary))))
+           (str summary " " "You are not carrying anything.")))))
 
 (deftest test-look-at-item
   (let [summary "The floors are made of marble."
