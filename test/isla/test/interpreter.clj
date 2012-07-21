@@ -110,6 +110,13 @@
            (new isla.test.interpreter.Person 0
                 ""
                 (new isla.test.interpreter.Person 0 "" :undefined))))))
+;; assignment
+
+(deftest test-non-canonical-assigned-obj-is-ref
+  (let [result (interpret (parse "mary is a person\nfriend is mary")
+                          (library/get-initial-env extra-types))]
+    (is (= (get (:ctx result) "friend")
+           {:ref "mary"}))))
 
 ;; test extract fn
 
@@ -133,7 +140,7 @@
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{}))))
 
-(deftest test-unknown-list-add-causes-exception
+(deftest test-unknown-scalar-list-add-causes-exception
   (try
     (interpret (parse "items add 'sword'")
                (library/get-initial-env extra-types))
@@ -141,12 +148,25 @@
     (catch Exception e
       (is (= (.getMessage e) "I do not know of a list called items.")))))
 
+(deftest test-unknown-object-attr-list-add-causes-exception
+  (try
+    (interpret (parse "isla items add 1")
+               (library/get-initial-env extra-types))
+    (is false) ;; should not get called
+    (catch Exception e
+      (is (= (.getMessage e) "I do not know of a list called isla items.")))))
+
 ;; list addition
 
 (deftest test-add-list
   (let [env (interpret (parse "items is a list\nitems add 'sword'")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{"sword"}))))
+
+(deftest test-add-obj-to-list-works-with-ref
+  (let [env (interpret (parse "items is a list\nmary is a person\nitems add mary")
+                       (library/get-initial-env extra-types))]
+    (is (= (get (:ctx env) "items") #{{:ref "mary"}}))))
 
 (deftest test-add-duplicate-item-does-nothing-string
   (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems add 'sword'")
@@ -164,12 +184,24 @@
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{((get extra-types "person"))}))))
 
+(deftest test-add-to-obj-attribute-list
+  (let [env (interpret (parse "isla is a person\nisla items add 1")
+                       (library/get-initial-env extra-types))]
+    (is (= (-> (resolve- {:ref "isla"} env) :items)
+           #{1}))))
+
 ;; list removal
 
 (deftest test-remove-list
   (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems remove 'sword'")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{}))))
+
+(deftest test-remove-obj-from-list-works-with-ref
+  (let [env (interpret (parse "items is a list\nmary is a person
+                               items add mary\nitems remove mary")
+                       (library/get-initial-env extra-types))]
+    (is (= (get (:ctx env) "items") #{}))))
 
 (deftest test-remove-obj-list
   (let [env (interpret (parse "mary is a person\nitems is a list
