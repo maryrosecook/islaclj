@@ -36,7 +36,7 @@
 
 (defrecord Story [player rooms]
   QueryableStory
-  (all-items [this]
+  (items [this]
     (concat (map (fn [x] (:items x)) rooms)))
   (item [this name]
     (if-let [item (first (filter (fn [y] (= name (:name y))) (all-items this)))]
