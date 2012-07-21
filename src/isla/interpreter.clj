@@ -122,6 +122,13 @@
               (merge hash el)) ast
               (map (fn [e] {(get e 0) (resolve- (get e 1) env)}) ast))))
 
+(defmethod resolve- clojure.lang.PersistentHashSet [ast env]
+  (let [out (reduce (fn [set el]
+                      (conj set el))
+                    #{}
+                    (map (fn [e] (resolve- e env)) ast))]
+    out))
+
 (defn friendly-class [clazz]
   (last (str/split (str clazz) #"\.")))
 
