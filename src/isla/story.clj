@@ -80,7 +80,7 @@
         (let [name (second arguments)]
           (if (some #{name} (map (fn [x] (:name x))
                                  items-in-room))
-            (let [item (first (filter (fn [x] (= (:name x) name)) items-in-room))]
+            (let [item (item (:room player) name)]
               (creturn
                (assoc-in
                 (assoc-in this [:player :items] (conj (:items player) item)) ;; item to player
