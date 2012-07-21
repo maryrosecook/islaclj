@@ -19,7 +19,7 @@
   (connected-rooms [this story]))
 
 (defprotocol QueryableStory
-  (all-items [this])
+  (items [this])
   (item [this name]))
 
 (defprotocol Playable
