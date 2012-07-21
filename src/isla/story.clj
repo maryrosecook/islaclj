@@ -66,10 +66,10 @@
         (if (or (not= "at" (first arguments)) (nil? (second arguments)))
           (creturn this (t/look-instructions (-> player :room :items)))
           (let [name (second arguments)]
-            (if-let [thing (if (> (.indexOf ["myself" "me"] name) -1)
-                             player
-                             (item (:room player) name))]
-              (creturn this (:summary thing))
+            (if-let [description (if (> (.indexOf ["myself" "me"] name) -1)
+                                   (t/player-description player)
+                                   (:summary (item (:room player) name)))]
+              (creturn this description)
               (creturn this (t/look-not-here name))))))))
 
   (pick [this arguments-str]
