@@ -119,7 +119,7 @@
 (def types
   {
    "monster" (fn [] (new isla.story.Monster "" ""))
-   "room" (fn [] (new isla.story.Room "" "" [] :undefined))
+   "room" (fn [] (new isla.story.Room "" "" #{} :undefined))
    "flower" (fn [] (new isla.story.Flower "" ""))
    "_player" (fn [] (new isla.story.Player "" "" :undefined #{}))
    })
