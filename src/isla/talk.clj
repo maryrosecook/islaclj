@@ -23,7 +23,7 @@
 
 ;; pick up
 
-(defn pick-up [name] (str "You have picked up the " name))
+(defn pick-up [name] (str "You have picked up the " name "."))
 
 (defn pick-not-here [name] (str "There is no " name " here."))
 
