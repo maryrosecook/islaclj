@@ -16,7 +16,8 @@
 (defrecord Flower [name summary])
 
 (defprotocol QueryableRoom
-  (connected-rooms [this story]))
+  (connected-rooms [this story])
+  (item [this name]))
 
 (defprotocol QueryableStory
   (items [this])
@@ -33,7 +34,9 @@
     (let [this-as-exits (filter (fn [x] (= this (:exit x))) (vals (:rooms story)))]
       (if (not= :undefined (:exit this))
         (conj this-as-exits (:exit this))
-        this-as-exits))))
+        this-as-exits)))
+  (item [this name]
+    (first (filter (fn [x] (= (:name x) name)) items))))
 
 (defrecord Story [player rooms]
   QueryableStory
