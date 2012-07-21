@@ -40,17 +40,26 @@
       (utils/thr (str "I do not know what a " type-identifier " is.")))))
 
 (defmethod interpret :list-assignment [node env]
-  (let [assignee-name (utils/extract node [:c 0 :c 0 :c 0 :c 0])
-        assignee (resolve- {:ref assignee-name} env)]
-    (if (nil? assignee)
-      (utils/thr (str "I do not know of a list called " assignee-name "."))
+  (let [assignee (utils/extract node [:c 0])
+        ;; little hack - dive into assignee, get object/scalar node and evaluate value
+        original-list (:val (evaluate-value (utils/extract assignee [:c 0]) env))]
+    (if (nil? original-list)
+      (let [ref (:ref (evaluate-value (utils/extract assignee [:c 0]) env))
+            variable-str (if (coll? ref)
+                           (str (first ref) " " (name (second ref)))
+                           ref)]
+        (utils/thr (str "I do not know of a list called " variable-str ".")))
       (let [operation (utils/extract node [:c 1 :c 0 :tag])
-            value (:val (interpret (utils/extract node [:c 2]) env))]
-        (let [new-list (cond
-                        (= :add operation) (conj assignee value)
-                        (= :remove operation) (disj assignee value)
-                        :else (utils/thr (str "You cannot " operation " on lists.")))]
-          (assoc-in env [:ctx assignee-name] new-list))))))
+            item-eval (interpret (utils/extract node [:c 2]) env)
+            item (if (contains? item-eval :ref)
+                   {:ref (:ref item-eval)}
+                   (:val item-eval))
+            new-list (cond
+                      (= :add operation) (conj original-list item)
+                      (= :remove operation) (disj original-list item)
+                      :else (utils/thr (str "You cannot " operation " on lists.")))
+            new-ctx (assign (:ctx env) assignee new-list)]
+        (nreturn new-ctx)))))
 
 (defmethod interpret :invocation [node env]
   (let [function (resolve- {:ref (interpret (utils/extract node [:c 0]) env)} env)
