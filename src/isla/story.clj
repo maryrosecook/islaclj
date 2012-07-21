@@ -20,8 +20,7 @@
   (item [this name]))
 
 (defprotocol QueryableStory
-  (items [this])
-  (item [this name]))
+  (items [this]))
 
 (defprotocol Playable
   (go [this arguments-str])
@@ -42,9 +41,6 @@
   QueryableStory
   (items [this]
     (concat (map (fn [x] (:items x)) rooms)))
-  (item [this name]
-    (if-let [item (first (filter (fn [y] (= name (:name y))) (items this)))]
-      item)) ;; item getter untested because didn't have items when wrote it
 
   Playable
   (go [this arguments-str]
