@@ -49,7 +49,8 @@
                         my room is palace")
         story (init-story story-str)]
     (is (= (:out (run-command story "look"))
-           summary))))
+           (str "You are in the palace. " summary " "
+                "There are no items in this room. " "There is no way out of this room.")))))
 
 (deftest test-look-at-myself
   (let [summary "You have no shoes on."

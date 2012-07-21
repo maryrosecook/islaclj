@@ -62,7 +62,8 @@
   (look [this arguments-str]
     (let [arguments (extract-arguments arguments-str)]
       (if (empty? arguments)
-        (creturn this (:summary (get player :room)))
+        (let [room (-> player :room)]
+          (creturn this (t/room-intro room (connected-rooms room this))))
         (if (or (not= "at" (first arguments)) (nil? (second arguments)))
           (creturn this (t/look-instructions (-> player :room :items)))
           (let [name (second arguments)]
