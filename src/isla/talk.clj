@@ -32,6 +32,16 @@
     (str "Try saying 'pick up " (:name (first items-in-room)) "'.")
     (str "There is nothing to pick up here.")))
 
+;; player description
+
+(defn player-description [player]
+  (str (:summary player) " "
+       (list-things (:items player)
+                    "You are not carrying anything."
+                    "You are carrying"
+                    "You are carrying"
+                    "a")))
+
 ;; room description
 
 (defn room-intro [room connected-rooms]
