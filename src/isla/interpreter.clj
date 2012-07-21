@@ -6,7 +6,7 @@
   (:require [mrc.utils :as utils]))
 
 (declare run-sequence resolve- nreturn
-         friendly-class friendly-symbol assign evaluate)
+         friendly-class friendly-symbol assign evaluate-value)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
 
@@ -68,25 +68,26 @@
       (nreturn (:ctx env) return-val))))
 
 (defmethod interpret :value [node env]
-  (evaluate (utils/extract node [:c 0]) env))
+  (evaluate-value (utils/extract node [:c 0]) env))
 
-(defmulti evaluate (fn [node _] (:tag node)))
+(defmulti evaluate-value (fn [node _] (:tag node)))
 
-(defmethod evaluate :literal [node env]
+(defmethod evaluate-value :literal [node env]
   {:val (interpret (utils/extract node [:c 0]) env)})
 
-(defmethod evaluate :variable [node env]
-  (evaluate (utils/extract node [:c 0]) env))
+(defmethod evaluate-value :variable [node env]
+  (evaluate-value (utils/extract node [:c 0]) env))
 
-(defmethod evaluate :scalar [node env]
-  (let [ref (interpret (utils/extract node [:c 0]) env)]
-    {:ref ref :val (resolve- {:ref ref} env)}))
+(defmethod evaluate-value :scalar [node env]
+  (let [identifier (interpret (utils/extract node [:c 0]) env)]
+    {:ref identifier :val (get (:ctx env) identifier)}))
 
-(defmethod evaluate :object [node env]
+(defmethod evaluate-value :object [node env]
   (let [object-identifier (utils/extract node [:c 0 :c 0])
         attribute-identifier (keyword (utils/extract node [:c 1 :c 0]))]
-    {:ref [object-identifier attribute-identifier] ;; not used now, but won't work if used
-     :val (get (resolve- {:ref object-identifier} env)
+    {:ref [object-identifier attribute-identifier] ;; not used now,
+                                                   ;; won't work if assign obj-attr to var
+     :val (get (get (:ctx env) object-identifier)
                attribute-identifier)}))
 
 (defmethod interpret :identifier [node _]
