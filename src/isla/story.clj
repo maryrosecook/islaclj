@@ -12,8 +12,7 @@
          extract-arguments creturn)
 
 (defrecord Monster [name summary])
-
-(defrecord Player [name summary room])
+(defrecord Player [name summary room items])
 (defrecord Flower [name summary])
 
 (defprotocol QueryableRoom
@@ -121,6 +120,6 @@
   {
    "monster" (fn [] (new isla.story.Monster "" ""))
    "room" (fn [] (new isla.story.Room "" "" [] :undefined))
-   "_player" (fn [] (new isla.story.Player "" "" :undefined))
    "flower" (fn [] (new isla.story.Flower "" ""))
+   "_player" (fn [] (new isla.story.Player "" "" :undefined #{}))
    })
