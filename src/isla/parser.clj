@@ -8,7 +8,7 @@
          pattern-sequence-selector one-token-pattern
          -root -block -expression -type-assignment -value-assignment -invocation
          -nl -integer -is-a -is -string -assignee -value -identifier
-         -scalar -object -variable -literal -add -remove -list-assignment
+         -scalar -object -variable -literal -add -remove -array-operation
          -list-operation)
 
 (defn parse [code]
@@ -29,7 +29,7 @@
 
 (defn -expression [tokens collected]
   (pattern-sequence-selector tokens [-type-assignment -value-assignment
-                                     -list-assignment -invocation]
+                                     -array-operation -invocation]
                              :expression))
 
 (defn -type-assignment [tokens]
@@ -44,10 +44,10 @@
     {:node (nnode :value-assignment (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
-(defn -list-assignment [tokens]
+(defn -array-operation [tokens]
   (if-let [{nodes :nodes left-tokens :left-tokens}
            (pattern-sequence tokens [-assignee -list-operation -value -nl] [])]
-    {:node (nnode :list-assignment (take 3 nodes)) :left-tokens left-tokens}
+    {:node (nnode :array-operation (take 3 nodes)) :left-tokens left-tokens}
     nil))
 
 (defn -invocation [tokens]
