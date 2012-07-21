@@ -14,6 +14,7 @@
 (defrecord Monster [name summary])
 
 (defrecord Player [name summary room])
+(defrecord Flower [name summary])
 
 (defprotocol QueryableRoom
   (connected-rooms [this story]))
@@ -121,4 +122,5 @@
    "monster" (fn [] (new isla.story.Monster "" ""))
    "room" (fn [] (new isla.story.Room "" "" [] :undefined))
    "_player" (fn [] (new isla.story.Player "" "" :undefined))
+   "flower" (fn [] (new isla.story.Flower "" ""))
    })
