@@ -39,11 +39,8 @@
   (items [this]
     (concat (map (fn [x] (:items x)) rooms)))
   (item [this name]
-    (if-let [item (first (filter (fn [y] (= name (:name y))) (all-items this)))]
-      item ;; item getter untested because didn't have items when wrote it
-      (if (> (.indexOf ["myself" "me"] name) -1)
-        player
-        nil)))
+    (if-let [item (first (filter (fn [y] (= name (:name y))) (items this)))]
+      item)) ;; item getter untested because didn't have items when wrote it
 
   Playable
   (go [this arguments-str]
@@ -67,8 +64,11 @@
       (if (empty? arguments)
         (creturn this (:summary (get player :room)))
         (if (= "at" (first arguments))
-          (if-let [item (item this (second arguments))]
-            (creturn this (:summary item))))))))
+          (let [name (second arguments)]
+            (if-let [thing (if (> (.indexOf ["myself" "me"] name) -1)
+                             player
+                             (item this name))]
+              (creturn this (:summary thing))))))))
 
 (defn init-story [story-str]
   (let [raw-env (interpreter/interpret
