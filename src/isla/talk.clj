@@ -3,7 +3,7 @@
   (:require [clojure.string :as str])
   (:require [mrc.utils :as utils]))
 
-(declare list-rooms)
+(declare list-things)
 
 ;; look
 
@@ -42,15 +42,16 @@
 (defn room-already [name] (str "You are already in the " name "."))
 (defn room-not-allowed [name] (str "You cannot go into the " name "."))
 
-(defmulti list-rooms (fn [rooms] (count rooms)))
-(defmethod list-rooms 0 [rooms] "There is no way out of this room.")
-(defmethod list-rooms 1 [rooms] (str "You can see a door to the " (:name (first rooms)) "."))
-(defmethod list-rooms :default [rooms]
-  (let [all-room-list (reduce (fn [string x]
-                                (str string ", the " (:name x)))
-                              "" rooms)
-        all-but-last-list (rest (butlast (str/split all-room-list #",")))
-        final (str "You can see a door to"
+(defmulti list-things (fn [things zero one-intro many-intro article] (count things)))
+(defmethod list-things 0 [things zero one-intro many-intro article] zero)
+(defmethod list-things 1 [things zero one-intro many-intro article]
+  (str one-intro " " article " " (:name (first things)) "."))
+(defmethod list-things :default [things zero one-intro many-intro article]
+  (let [all-thing-list (reduce (fn [string x]
+                                (str string ", " article " " (:name x)))
+                              "" things)
+        all-but-last-list (rest (butlast (str/split all-thing-list #",")))
+        final (str many-intro
                    (str/join "," all-but-last-list)
-                   " and the " (:name (last rooms)) ".")]
-  final))
+                   " and " article " " (:name (last things)) ".")]
+    final))
