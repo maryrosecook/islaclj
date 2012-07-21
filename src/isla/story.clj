@@ -63,12 +63,14 @@
     (let [arguments (extract-arguments arguments-str)]
       (if (empty? arguments)
         (creturn this (:summary (get player :room)))
-        (if (= "at" (first arguments))
+        (if (or (not= "at" (first arguments)) (nil? (second arguments)))
+          (creturn this (t/look-instructions (-> player :room :items)))
           (let [name (second arguments)]
             (if-let [thing (if (> (.indexOf ["myself" "me"] name) -1)
                              player
-                             (item this name))]
-              (creturn this (:summary thing))))))))
+                             (item (:room player) name))]
+              (creturn this (:summary thing))
+              (creturn this (t/look-not-here name))))))))
 
   (pick [this arguments-str]
     (let [arguments (extract-arguments arguments-str)

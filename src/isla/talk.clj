@@ -5,6 +5,15 @@
 
 (declare list-rooms)
 
+;; look
+
+(defn look-instructions [items-in-room]
+  (if (> (count items-in-room) 0)
+    (str "Try saying 'look at " (:name (first items-in-room)) "'.")
+    (str "Try saying 'look' or 'look at myself'.")))
+
+(defn look-not-here [name] (str "There is no " name " here."))
+
 ;; go
 
 (defn go-instructions [connected-rooms]

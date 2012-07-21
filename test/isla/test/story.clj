@@ -58,6 +58,29 @@
     (is (= (:out (run-command story "look at myself"))
            summary))))
 
+(deftest test-look-at-item
+  (let [summary "The floors are made of marble."
+        story-str (str "palace is a room
+                        daisy is a flower\ndaisy summary is 'woo'\npalace items add daisy
+                        my room is palace")
+        story (init-story story-str)]
+    (is (= (:out (run-command story "look at daisy"))
+           "woo"))))
+
+(deftest test-look-non-existent-item-no-items
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)]
+    (is (re-find #"no daisy here"
+                 (:out (run-command story "look at daisy"))))))
+
+(deftest test-look-non-existent-item-items-in-room
+  (let [story-str (str "palace is a room
+                        daisy is a flower\npalace items add daisy
+                        my room is palace")
+        story (init-story story-str)]
+    (is (re-find #"no gun here"
+                 (:out (run-command story "look at gun"))))))
+
 ;; connected-rooms
 
 (deftest test-get-rooms-connected-in-reverse-direction
