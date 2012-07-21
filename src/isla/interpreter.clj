@@ -117,8 +117,8 @@
 
 (defmethod resolve- java.util.Map [ast env]
   (if (contains? ast :ref)
-    (resolve- (get (:ctx env) (:ref ast)) env) ;; resolve and dive down
-    (reduce (fn [hash el] ;; just dive down
+    (resolve- (get (:ctx env) (:ref ast)) env) ;; got an actual ref - resolve it
+    (reduce (fn [hash el] ;; just a hash that is not a ref - dive down
               (merge hash el)) ast
               (map (fn [e] {(get e 0) (resolve- (get e 1) env)}) ast))))
 
