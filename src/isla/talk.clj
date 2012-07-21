@@ -5,15 +5,30 @@
 
 (declare list-rooms)
 
-(defn room-intro [room connected-rooms]
-  (str "You are in the " (:name room) ". "
-       (:summary room) " "
-       (list-rooms connected-rooms)))
+;; go
 
 (defn go-instructions [connected-rooms]
   (if (> (count connected-rooms) 0)
     (str "Try saying 'go into " (:name (first connected-rooms)) "'.")
     (str "You cannot go anywhere.")))
+
+;; pick up
+
+(defn pick-up [name] (str "You have picked up the " name))
+
+(defn pick-not-here [name] (str "There is no " name " here."))
+
+(defn pick-instructions [items-in-room]
+  (if (> (count items-in-room) 0)
+    (str "Try saying 'pick up " (:name (first items-in-room)) "'.")
+    (str "There is nothing to pick up here.")))
+
+;; room description
+
+(defn room-intro [room connected-rooms]
+  (str "You are in the " (:name room) ". "
+       (:summary room) " "
+       (list-rooms connected-rooms)))
 
 (defn room-already [name] (str "You are already in the " name "."))
 (defn room-not-allowed [name] (str "You cannot go into the " name "."))

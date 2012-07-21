@@ -110,3 +110,52 @@
         result (run-command story "go")]
     (is (re-find #"You cannot go anywhere" (:out result)))
     (is (= story (:sto result)))))
+
+;; pick up
+
+(deftest test-can-pick-up
+  (let [story-str (str "palace is a room\ndaisy is a flower
+                        palace items add daisy\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "pick up daisy")]
+    (is (re-find #"picked up the daisy" (:out result)))
+    (is (= (-> result :sto :player :items)
+           #{(new isla.story.Flower "daisy" "")}))
+    (is (= (:items (get (:rooms (:sto result)) "palace"))
+           #{}))))
+
+(deftest test-get-nothing-to-pick-up-if-put-pick-and-nothing-in-room
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "pick")]
+    (is (re-find #"is nothing to pick" (:out result)))
+    (is (= (-> result :sto) story))))
+
+(deftest test-get-nothing-to-pick-up-if-put-pick-up-no-item-and-nothing-in-room
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "pick up")]
+    (is (re-find #"is nothing to pick" (:out result)))
+    (is (= (-> result :sto) story))))
+
+(deftest test-get-pick-up-suggestion-if-put-pick-and-something-in-room
+  (let [story-str (str "palace is a room\ndaisy is a flower
+                        palace items add daisy\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "pick")]
+    (is (re-find #"saying 'pick up daisy'" (:out result)))
+    (is (= (-> result :sto) story))))
+
+(deftest test-get-nothing-to-pick-up-if-put-pick-up-no-item-and-nothing-in-room
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "pick up")]
+    (is (re-find #"is nothing to pick" (:out result)))
+    (is (= (-> result :sto) story))))
+
+(deftest test-get-told-no-item-if-try-and-pick-up-something-not-there
+  (let [story-str (str "palace is a room\nmy room is palace")
+        story (init-story story-str)
+        result (run-command story "pick up sword")]
+    (is (re-find #"is no sword here" (:out result)))
+    (is (= (-> result :sto) story))))

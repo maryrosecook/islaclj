@@ -24,7 +24,8 @@
 
 (defprotocol Playable
   (go [this arguments-str])
-  (look [this arguments-str]))
+  (look [this arguments-str])
+  (pick [this arguments-str]))
 
 (defrecord Room [name summary items exit]
   QueryableRoom
@@ -69,6 +70,24 @@
                              player
                              (item this name))]
               (creturn this (:summary thing))))))))
+
+  (pick [this arguments-str]
+    (let [arguments (extract-arguments arguments-str)
+          items-in-room (-> player :room :items)]
+      (if (or (not= "up" (first arguments)) (nil? (second arguments)))
+        (creturn this (t/pick-instructions items-in-room))
+        (let [name (second arguments)]
+          (if (some #{name} (map (fn [x] (:name x))
+                                 items-in-room))
+            (let [item (first (filter (fn [x] (= (:name x) name)) items-in-room))]
+              (creturn
+               (assoc-in
+                (assoc-in this [:player :items] (conj (:items player) item)) ;; item to player
+                [:rooms (:name (:room player)) :items]
+                (disj (-> player :room :items) item)) ;; room items w/o picked up item
+               (t/pick-up name)))
+            (creturn this (t/pick-not-here name)))))))
+  )
 
 (defn init-story [story-str]
   (let [raw-env (interpreter/interpret
