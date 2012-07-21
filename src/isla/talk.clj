@@ -37,7 +37,16 @@
 (defn room-intro [room connected-rooms]
   (str "You are in the " (:name room) ". "
        (:summary room) " "
-       (list-rooms connected-rooms)))
+       (list-things (:items room)
+                    "There are no items in this room."
+                    "You can see "
+                    "You can see "
+                    "a") " "
+       (list-things connected-rooms
+                    "There is no way out of this room."
+                    "You can see a door to"
+                    "You can see doors to"
+                    "the")))
 
 (defn room-already [name] (str "You are already in the " name "."))
 (defn room-not-allowed [name] (str "You cannot go into the " name "."))
