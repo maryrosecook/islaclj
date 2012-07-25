@@ -6,6 +6,10 @@ A programming language for young children.
 
 https://github.com/maryrosecook/isla/blob/master/languageguide.md
 
+## Story writing guide
+
+https://github.com/maryrosecook/isla/blob/master/storyenvironmentguide.md
+
 ## Quick start
 
 ### Setup
@@ -33,6 +37,10 @@ Valid story commands, so far:
     look
     look at myself
     go into garden
+
+### Write your own story in the Isla language
+
+Refer to the dedicated guide: https://github.com/maryrosecook/isla/blob/master/storyenvironmentguide.md
 
 ### Isla REPL:
 
