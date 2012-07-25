@@ -6,11 +6,11 @@ The Isla project comprises three parts.
 
 First, the core language.  The basic syntax for expressions, assignments, blocks, conditionals and invocation.  The built in library of functions, like `write`.  The built in object types, like lists, and value types, like integers and strings.
 
-Second, the storytelling environment.  The extra data types related to the story world, like `player` and `room`.  The automatically generated variables, like `me`.
+Second, the story environment.  This is the tools available to someone writing a story in Isla code.  For example: the extra data types related to the story world, like `player` and `room`, and the automatically generated variables, like `me`.
 
-Third, the story itself.  The object that handles taking input from the player, like `go into garden`, manipulates the story state and outputs the result, like `You are in the garden.  You can see a door to the palace.`, to the player.
+Third, the storytelling itself.  The object that handles taking input from the player, like `go into garden`, manipulates the story state and outputs the result to the player, like `You are in the garden.  You can see a door to the palace.`.
 
-This guide will cover the first part.  For the other parts, see `storytellingguide.md` and `storyguide.md`.  These two other documents are not written, yet.
+This guide will cover the first part.  For the other parts, see `storyenvironmentguide.md` and `storytellingguide.md`.  These two other documents are not written, yet.
 
 ## Basic units of the language
 
