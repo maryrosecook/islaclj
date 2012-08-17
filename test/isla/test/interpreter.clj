@@ -11,6 +11,14 @@
 (def extra-types
   {"person" (fn [] (new isla.test.interpreter.Person 0 "" :undefined #{}))})
 
+(defn new-person
+  ([] (new-person 0))
+  ([age] (new-person age ""))
+  ([age name] (new-person age name :undefined))
+  ([age name friend] (new-person age name friend #{}))
+  ([age name friend items]
+     (map->Person {:age age :name name :friend friend :items items})))
+
 ;; non-slot assignment
 
 (deftest integer-assignment
@@ -22,7 +30,7 @@
   (let [env (interpret (parse "isla is a person\nfriend is isla\nisla age is 1")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "friend"} env)
-           (new isla.test.interpreter.Person 1 "" :undefined #{})))))
+           (new-person 1)))))
 
 (deftest test-lookup-resolves-object-slot-to-object-reference-with-updated-data
   (let [env (interpret (parse "isla is a person
@@ -31,8 +39,8 @@
                                isla age is 1")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "mary"} env)
-           (let [isla (new isla.test.interpreter.Person 1 "" :undefined #{})]
-             (new isla.test.interpreter.Person 0 "" isla #{}))))))
+           (let [isla (new-person 1)]
+             (new-person 0 "" isla))))))
 
 ;; invocation
 
@@ -71,15 +79,13 @@
   (let [result (interpret (parse "isla is a person")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 0 "" :undefined #{})))))
+           (new-person)))))
 
-(deftest test-unknown-type-causes-exception
-  (try
-    (interpret (parse "isla is a giraffe")
-               (library/get-initial-env extra-types))
-    (is false) ;; should not get called
-    (catch Exception e
-      (is (= (.getMessage e) "I do not know what a giraffe is.")))))
+(deftest test-type-assignment-of-a-generic-type
+  (let [result (interpret (parse "isla is a giraffe")
+                          (library/get-initial-env extra-types))]
+    (is (= (get (:ctx result) "isla")
+           {}))))
 
 ;; slot assignment
 
@@ -87,30 +93,32 @@
   (let [result (interpret (parse "isla is a person\nisla age is 1")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 1 "" :undefined #{})))))
+           (new-person 1)))))
 
 (deftest test-slot-assignment-retention-of-other-slot-values
   (let [result (interpret (parse "isla is a person\nisla name is 'isla'\nisla age is 1")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 1 "isla" :undefined #{})))))
+           (new-person 1 "isla")))))
 
 (deftest test-non-existent-slot-assignment
-  (try
-    (interpret (parse "isla is a person\nisla material is 'metal'")
-               (library/get-initial-env extra-types))
-    (is false) ;; shouldn't get called
-    (catch Exception e
-      (is (= (.getMessage e) "Persons do not have a material.")))))
+  (let [result (interpret (parse "isla is a person\nisla material is 'metal'")
+                          (library/get-initial-env extra-types))]
+   (is (= (get-in result [:ctx "isla" :material])
+          "metal"))))
 
 (deftest test-slot-type-assignment
   (let [result (interpret (parse "isla is a person\nisla friend is a person")
                           (library/get-initial-env extra-types))]
     (is (= (get (:ctx result) "isla")
-           (new isla.test.interpreter.Person 0
-                ""
-                (new isla.test.interpreter.Person 0 "" :undefined #{})
-                #{})))))
+           (new-person 0 "" (new-person))))))
+
+(deftest test-generic-slot-assignment
+  (let [result (interpret (parse "isla is a monkey\nisla age is 1")
+                          (library/get-initial-env extra-types))]
+    (is (= (get (:ctx result) "isla")
+           {:age 1}))))
+
 
 ;; assignment
 
