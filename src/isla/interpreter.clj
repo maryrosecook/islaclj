@@ -34,10 +34,11 @@
 (defmethod interpret :type-assignment [node env]
   (let [assignee (utils/extract node [:c 0])
         type-identifier (interpret (utils/extract node [:c 2]) env)]
-    (if-let [type-fn (get (:types (:ctx env)) type-identifier)]
-      (let [new-ctx (assign (:ctx env) assignee (type-fn))]
-        (nreturn new-ctx))
-      (utils/thr (str "I do not know what a " type-identifier " is.")))))
+    (let [type-fn (or (get-in env [:ctx :types type-identifier])
+                      (get-in env [:ctx :types "generic"]))
+          type (instantiate-type type-fn type-identifier assignee)
+          new-ctx (assign (:ctx env) assignee type)]
+        (nreturn new-ctx))))
 
 (defmethod interpret :array-operation [node env]
   (let [assignee (utils/extract node [:c 0])
@@ -69,6 +70,9 @@
 
 (defmethod interpret :value [node env]
   (evaluate-value (utils/extract node [:c 0]) env))
+
+(defn instantiate-type [type-fn identifier assignee]
+  (with-meta (type-fn) {:type identifier}))
 
 (defmulti evaluate-value (fn [node _] (:tag node)))
 
@@ -108,10 +112,7 @@
   (let [object-name (utils/extract assignee-node [:c 0 :c 0 :c 0])
         slot-name-str (utils/extract assignee-node [:c 0 :c 1 :c 0])
         current-slot-value (get (get ctx object-name) (keyword slot-name-str))]
-    (if (nil? current-slot-value) ;; initial value of intended slot will never be nil
-      (let [object-class (friendly-class (class (get ctx object-name)))]
-        (utils/thr (str object-class "s do not have a " slot-name-str ".")))
-      (assoc-in ctx [object-name (keyword slot-name-str)] value))))
+    (assoc-in ctx [object-name (keyword slot-name-str)] value)))
 
 (defn nreturn
   ([ctx] {:ctx ctx :ret nil})

@@ -3,4 +3,5 @@
 (def types
   {
    "list" (fn [] #{})
+   "generic" (fn [] {})
    })
