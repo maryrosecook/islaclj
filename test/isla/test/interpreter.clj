@@ -209,13 +209,13 @@
 
 (deftest test-remove-obj-from-list-works-with-ref
   (let [env (interpret (parse "items is a list\nmary is a person
-                               items add mary\nitems remove mary")
+                            items add mary\nitems remove mary")
                        (library/get-initial-env extra-types))]
     (is (= (get (:ctx env) "items") #{}))))
 
 (deftest test-remove-obj-list
   (let [env (interpret (parse "mary is a person\nitems is a list
-                               items add mary\nitems remove mary")
+                            items add mary\nitems remove mary")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) #{}))))
 
@@ -231,8 +231,8 @@
 
 (deftest test-remove-non-existent-item-does-nothing-obj
   (let [env (interpret (parse "mary is a person\nmary age is 1
-                               isla is a person\nitems is a list
-                               items add isla\nitems add mary\nitems remove mary")
+                            isla is a person\nitems is a list
+                            items add isla\nitems add mary\nitems remove mary")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env)
            #{((get extra-types "person"))}))))
