@@ -20,7 +20,7 @@
 (defn -block [tokens collected]
   (if-let [{node :node left-tokens :left-tokens}
            (-expression tokens [])]
-    (-block left-tokens (conj collected node)) ;; add expr, continue collecting more
+    (recur left-tokens (conj collected node)) ;; add expr, continue collecting more
     (if (= 0 (count tokens))
       (nnode :block collected) ;; no more exprs, all tokens used, return block
       (throw (Exception. (str "Got lost at: " (vec tokens))))))) ;; tokens remaining - throw

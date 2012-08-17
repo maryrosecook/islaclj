@@ -64,9 +64,9 @@
 
 (defmethod interpret :invocation [node env]
   (let [function (resolve- {:ref (interpret (utils/extract node [:c 0]) env)} env)
-        param (:val (interpret (utils/extract node [:c 1]) env))]
-    (let [return-val (function env param)] ;; call fn
-      (nreturn (:ctx env) return-val))))
+        param (resolve- (:val (interpret (utils/extract node [:c 1]) env)) env)
+        return-val (function env param)] ;; call fn
+    (nreturn (:ctx env) return-val)))
 
 (defmethod interpret :value [node env]
   (evaluate-value (utils/extract node [:c 0]) env))
