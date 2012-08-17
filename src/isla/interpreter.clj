@@ -6,7 +6,8 @@
   (:require [mrc.utils :as utils]))
 
 (declare run-sequence resolve- nreturn
-         friendly-class friendly-symbol assign evaluate-value)
+         friendly-class friendly-symbol assign evaluate-value
+         instantiate-type)
 
 (defmulti interpret (fn [& args] (:tag (first args))))
 
@@ -121,24 +122,34 @@
 (defn remret [env]
   (assoc env :ret nil))
 
+(defn dispatch-resolution [item]
+  (cond (instance? clojure.lang.PersistentHashSet item)
+        :list
+
+        (instance? java.util.Map item)
+        (if (:ref item)
+          :ref
+          :map)))
+
 ;; does not handle circular references
-(defmulti resolve- (fn [ast env] (class ast)))
+(defmulti resolve- (fn [ctx env] (dispatch-resolution ctx)))
 
 (defmethod resolve- :default [thing env] thing)
 
-(defmethod resolve- java.util.Map [ast env]
-  (if (contains? ast :ref)
-    (resolve- (get (:ctx env) (:ref ast)) env) ;; got an actual ref - resolve it
-    (reduce (fn [hash el] ;; just a hash that is not a ref - dive down
-              (merge hash el)) ast
-              (map (fn [e] {(get e 0) (resolve- (get e 1) env)}) ast))))
+(defmethod resolve- :ref [{:keys [ref]} env]
+  (resolve- (get (:ctx env) ref) env))
 
-(defmethod resolve- clojure.lang.PersistentHashSet [ast env]
-  (let [out (reduce (fn [set el]
-                      (conj set el))
-                    #{}
-                    (map (fn [e] (resolve- e env)) ast))]
-    out))
+(defmethod resolve- :map [map env]
+  (reduce (fn [hash el] ;; just a hash that is not a ref - dive down
+            (merge hash el))
+          map
+          (clojure.core/map (fn [[k v]] {k (resolve- v env)}) map)))
+
+(defmethod resolve- :list [list env]
+  (reduce (fn [set el]
+            (conj set el))
+          #{}
+          (map (fn [e] (resolve- e env)) list)))
 
 (defn friendly-class [clazz]
   (last (str/split (str clazz) #"\.")))
