@@ -5,5 +5,5 @@
   (flush)
   (read-line))
 
-(defn output [given-output]
-  (println " " given-output))
+(defn output [& outs]
+  (apply println " " outs))
