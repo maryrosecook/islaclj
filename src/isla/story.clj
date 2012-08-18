@@ -40,7 +40,7 @@
 (defrecord Story [player rooms]
   QueryableStory
   (items [this]
-    (concat (map (fn [x] (:items x)) rooms)))
+    (concat (map :items rooms)))
 
   Playable
   (go [this arguments-str]
