@@ -97,7 +97,6 @@
                  (library/get-initial-env types (get-story-ctx)))
         env (assoc raw-env :ctx (name-into-objs (:ctx raw-env)))
         ctx (interpreter/resolve- (:ctx env) env)
-
         rooms (extract-by-class ctx isla.story.Room)
         player (val (first (extract-by-class ctx isla.story.Player)))]
     (Story. player rooms)))
