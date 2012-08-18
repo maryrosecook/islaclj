@@ -26,18 +26,18 @@
         value-node (interpret (utils/extract node [:c 2]) env)
         value (if (contains? value-node :ref)
                 {:ref (:ref value-node)}
-                (:val value-node))]
-    (let [new-ctx (assign (:ctx env) assignee value)]
-      (nreturn new-ctx))))
+                (:val value-node))
+        new-ctx (assign (:ctx env) assignee value)]
+    (nreturn new-ctx)))
 
 (defmethod interpret :type-assignment [node env]
   (let [assignee (utils/extract node [:c 0])
-        type-identifier (interpret (utils/extract node [:c 2]) env)]
-    (let [type-fn (or (get-in env [:ctx :types type-identifier])
-                      (get-in env [:ctx :types "generic"]))
-          type (instantiate-type type-fn type-identifier assignee)
-          new-ctx (assign (:ctx env) assignee type)]
-        (nreturn new-ctx))))
+        type-identifier (interpret (utils/extract node [:c 2]) env)
+        type-fn (or (get-in env [:ctx :types type-identifier])
+                    (get-in env [:ctx :types "generic"]))
+        type (instantiate-type type-fn type-identifier assignee)
+        new-ctx (assign (:ctx env) assignee type)]
+    (nreturn new-ctx)))
 
 (defmethod interpret :array-operation [node env]
   (let [assignee (utils/extract node [:c 0])
