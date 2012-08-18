@@ -15,61 +15,60 @@
   (-root (lex code)))
 
 (defn -root [tokens]
-  (nnode :root [(-block tokens [])]))
+  (nnode :root [(-block tokens)]))
 
-(defn -block [tokens collected]
-  (if-let [{node :node left-tokens :left-tokens}
-           (-expression tokens [])]
-    (recur left-tokens (conj collected node)) ;; add expr, continue collecting more
-    (if (= 0 (count tokens))
-      (nnode :block collected) ;; no more exprs, all tokens used, return block
-      (throw (Exception. (str "Got lost at: " (vec tokens))))))) ;; tokens remaining - throw
+(defn -block
+  ([tokens] (-block tokens []))
+  ([tokens collected]
+     (if-let [{node :node left-tokens :left-tokens}
+              (-expression tokens)]
+       (recur left-tokens (conj collected node)) ;; add expr, continue collecting more
+       (if (= 0 (count tokens))
+         (nnode :block collected) ;; no more exprs, all tokens used, return block
+         (throw (Exception. (str "Got lost at: " (vec tokens)))))))) ;; tokens remaining - throw
 
 ;; expressions
 
-(defn -expression [tokens collected]
-  (pattern-sequence-selector tokens [-type-assignment -value-assignment
-                                     -array-operation -invocation]
-                             :expression))
+(defn -expression
+  ([tokens] (-expression tokens []))
+  ([tokens collected]
+     (pattern-sequence-selector tokens [-type-assignment -value-assignment
+                                        -array-operation -invocation]
+                                :expression)))
 
 (defn -type-assignment [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-assignee -is-a -identifier -nl] [])]
-    {:node (nnode :type-assignment (take 3 nodes)) :left-tokens left-tokens}
-    nil))
+  (when-let [{nodes :nodes left-tokens :left-tokens}
+             (pattern-sequence tokens [-assignee -is-a -identifier -nl])]
+    {:node (nnode :type-assignment (take 3 nodes)) :left-tokens left-tokens}))
 
 (defn -value-assignment [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-assignee -is -value -nl] [])]
-    {:node (nnode :value-assignment (take 3 nodes)) :left-tokens left-tokens}
-    nil))
+  (when-let [{nodes :nodes left-tokens :left-tokens}
+             (pattern-sequence tokens [-assignee -is -value -nl])]
+    {:node (nnode :value-assignment (take 3 nodes)) :left-tokens left-tokens}))
 
 (defn -array-operation [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-assignee -list-operation -value -nl] [])]
-    {:node (nnode :array-operation (take 3 nodes)) :left-tokens left-tokens}
-    nil))
+  (when-let [{nodes :nodes left-tokens :left-tokens}
+             (pattern-sequence tokens [-assignee -list-operation -value -nl])]
+    {:node (nnode :array-operation (take 3 nodes)) :left-tokens left-tokens}))
 
 (defn -invocation [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-identifier -value -nl] [])]
-    {:node (nnode :invocation (take 2 nodes)) :left-tokens left-tokens}
-    nil))
+  (when-let [{nodes :nodes left-tokens :left-tokens}
+             (pattern-sequence tokens [-identifier -value -nl])]
+    {:node (nnode :invocation (take 2 nodes)) :left-tokens left-tokens}))
 
 (defn -list-operation [tokens]
-  (if-let [{node :node left-tokens :left-tokens}
-           (pattern-sequence-selector tokens [-add -remove] :list-operation)]
-    (let []
-      {:node node :left-tokens left-tokens})
-    nil))
+  (when-let [{node :node left-tokens :left-tokens}
+             (pattern-sequence-selector tokens [-add -remove] :list-operation)]
+    {:node node :left-tokens left-tokens}))
 
 ;; atoms
 
 (defn -is-a [tokens]
   (let [one (first tokens) two (second tokens)]
-    (if (and (string? one) (string? two))
-      (if (is-type #"is a" (str one " " two))
-        {:node (nnode :is-a [:is-a]) :left-tokens (nthrest tokens 2)}))))
+    (when (and (string? one)
+               (string? two)
+               (is-type #"is a" (str one " " two)))
+      {:node (nnode :is-a [:is-a]) :left-tokens (nthrest tokens 2)})))
 
 (defn -nl [tokens] (one-token-pattern tokens :nl :nl))
 
@@ -101,16 +100,14 @@
   (pattern-sequence-selector tokens [-object -scalar] :assignee))
 
 (defn -scalar [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-identifier] [])]
-    {:node (nnode :scalar (take 1 nodes)) :left-tokens left-tokens}
-    nil))
+  (when-let [{nodes :nodes left-tokens :left-tokens}
+             (pattern-sequence tokens [-identifier])]
+    {:node (nnode :scalar (take 1 nodes)) :left-tokens left-tokens}))
 
 (defn -object [tokens]
-  (if-let [{nodes :nodes left-tokens :left-tokens}
-           (pattern-sequence tokens [-identifier -identifier] [])]
-    {:node (nnode :object (take 2 nodes)) :left-tokens left-tokens}
-    nil))
+  (when-let [{nodes :nodes left-tokens :left-tokens}
+             (pattern-sequence tokens [-identifier -identifier])]
+    {:node (nnode :object (take 2 nodes)) :left-tokens left-tokens}))
 
 (defn -integer [tokens]
   (one-token-pattern tokens #"[1-9][0-9]*" :integer
@@ -141,27 +138,24 @@
 
 (defn pattern-sequence-selector [tokens pattern-sequences tag]
   (let [alts (alternatives tokens pattern-sequences)]
-    (if (> (count alts) 0)
+    (when (> (count alts) 0)
       (let [{node :node left-tokens :left-tokens} (first alts)]
-        {:node (nnode tag [node]) :left-tokens left-tokens}) ;; return alternative
-      nil))) ;; no alternatives match - return
+        {:node (nnode tag [node]) :left-tokens left-tokens})))) ;; return alternative
 
-(defn pattern-sequence [tokens patterns collected]
-  (if-let [pattern (first patterns)]
-    (if-let [{node :node left-tokens :left-tokens} (pattern tokens)] ;; matched token
-      (pattern-sequence left-tokens (rest patterns) (conj collected node)) ;; round again
-      nil) ;; pattern sequence element match failure - return
-    {:nodes collected :left-tokens tokens})) ;; pattern matched - return
+(defn pattern-sequence
+  ([tokens patterns]
+     (pattern-sequence tokens patterns []))
+  ([tokens patterns collected]
+     (if-let [pattern (first patterns)]
+       (when-let [{node :node left-tokens :left-tokens} (pattern tokens)] ;; matched token
+         (recur left-tokens (rest patterns) (conj collected node))) ;; round again
+       {:nodes collected :left-tokens tokens}))) ;; pattern matched - return
 
-(defn one-token-pattern [tokens matcher tag & args]
-  (if-let [token (first tokens)]
-    (if (is-type matcher token)
-      (let [output (if (not= nil args)
-                     ((first args) token)
-                     [token])]
-        {:node (nnode tag output) :left-tokens (rest tokens)})
-      nil)
-    nil))
+(defn one-token-pattern [tokens matcher tag & [f]]
+  (when-let [token (first tokens)]
+    (when (is-type matcher token)
+      (let [output (if f (f token) [token])]
+        {:node (nnode tag output) :left-tokens (rest tokens)}))))
 
 (defn nnode [tag data]
   {:tag tag :c data})
