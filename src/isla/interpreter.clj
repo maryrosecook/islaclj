@@ -140,16 +140,12 @@
   (resolve- (get (:ctx env) ref) env))
 
 (defmethod resolve- :map [map env]
-  (reduce (fn [hash el] ;; just a hash that is not a ref - dive down
-            (merge hash el))
+  (reduce merge ;; just a hash that is not a ref - dive down
           map
           (clojure.core/map (fn [[k v]] {k (resolve- v env)}) map)))
 
 (defmethod resolve- :list [list env]
-  (reduce (fn [set el]
-            (conj set el))
-          #{}
-          (map (fn [e] (resolve- e env)) list)))
+  (reduce conj #{} (map (fn [e] (resolve- e env)) list)))
 
 (defn friendly-class [clazz]
   (last (str/split (str clazz) #"\.")))
@@ -161,4 +157,4 @@
   (if (empty? nodes)
     env ;; return env
     ;; interpret next node, get back env, pass that and remaining nodes back around
-    (run-sequence (rest nodes) (interpret (first nodes) (remret env)))))
+    (recur (rest nodes) (interpret (first nodes) (remret env)))))

@@ -130,9 +130,11 @@
     (not= nil (re-matches re token))))
 
 (defn alternatives [input types]
-  (vec (map (fn [t] (t input)) ;; get nodes for each matching type
-            (filter (fn [t] (not= nil (t input))) ;; get matching types
-                    types))))
+  (reduce (fn [acc t]
+            (if-let [node (t input)] ;; get nodes for each type
+              (conj acc node)
+              acc))
+          [] types))
 
 (defn pattern-sequence-selector [tokens pattern-sequences tag]
   (let [alts (alternatives tokens pattern-sequences)]
