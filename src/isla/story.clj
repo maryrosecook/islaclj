@@ -117,21 +117,16 @@
   {"my" ((get types "_player"))})
 
 (defn name-into-objs [objs]
-  (tuples-to-hash (map (fn [{k 0 v 1}]
-                         [k (if (and (contains? v :name) (str/blank? (:name v)))
-                              (assoc v :name k)
-                              v)])
-                       objs)))
+  (into {} (map (fn [[k v]]
+                  (let [v (if (and (contains? v :name) (str/blank? (:name v)))
+                            (assoc v :name k)
+                            v)]
+                    [k v]))
+                objs)))
 
 (defn extract-by-class [ctx clazz]
-  (tuples-to-hash (filter
-                   (fn [x] (= clazz (class (val x))))
+  (into {} (filter (fn [x] (= clazz (class (val x))))
                    ctx)))
-
-(defn tuples-to-hash [seq-]
-  (reduce (fn [hash el] (assoc hash (get el 0) (get el 1)))
-          {}
-          seq-))
 
 (defn creturn
   ([story] {:sto story :out nil})
