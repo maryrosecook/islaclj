@@ -9,13 +9,11 @@
          friendly-class friendly-symbol assign evaluate-value
          instantiate-type)
 
-(defmulti interpret (fn [& args] (:tag (first args))))
+(defmulti interpret (fn [node & [env]] (:tag node)))
 
-(defmethod interpret :root [node & args]
+(defmethod interpret :root [node & [env]]
   (let [content (:c node)]
-    (if (not= nil args)
-      (run-sequence content (first args))
-      (run-sequence content (get-initial-env)))))
+    (run-sequence content (or env (get-initial-env)))))
 
 (defmethod interpret :block [node env]
   (run-sequence (:c node) env))
