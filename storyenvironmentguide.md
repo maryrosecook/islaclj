@@ -18,16 +18,16 @@ This creates an object of type `room` that has some pre-defined attributes like 
 
     palace summary is 'The floor is of marble.'
 
-The pre-defined types that are accessible in the Isla story environment, and their attributes:
+The pre-defined types that are accessible in the Isla story environment, and the attributes that are meaningful in the story environment:
 
 * `room`
   * `summary` [string] A description of the room.  This will be displayed when the player enters the room, or when they type `look`.
-  * `items` [list] A list of items in the room.  These are the items that the player can interact with when they are in the room.  In the future, there will be built-in item types, and, also, programmer-definable item types.
+  * `items` [list] A list of items in the room.  These are the items that the player can interact with when they are in the room.  In the future, there will be built-in item types.
   * `exit` [room] A room that this room connects to.  Because a room only has one exit attribute, rooms are connected in chains.  So, to connect a chain leading from the palace to the garden to the road, you would write: `palace exit is garden` and `garden exit is road`.
 
 ### Programmer-definable types
 
-In the future, the Isla language will support the definition and instantiation of types by the programmer.
+The Isla language supports the definition and instantiation of types by the programmer.  See `languageguide.md` for more details.
 
 ## Pre-defined variables
 

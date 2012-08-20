@@ -18,11 +18,11 @@ Tokens in the language are delimited by whitespace.  Whitespace means spaces, ta
 
 Expressions in the language are delimited by new lines.
 
-An Isla program can only have one block.  Regardless of the number of new lines between expressions, a program will comprise a single block of statements.
+An Isla program can only have one block.
 
 ## Blocks
 
-Regardless of the number of new lines between expressions, an Isla program consists of a single block.
+Regardless of the number of new lines between expressions, all expressions in the program will belong to one block.
 
 ## Scope and environment
 
@@ -30,13 +30,13 @@ An Isla program has a single, global scope.  All variables, types and functions 
 
 The environment consists of two things.
 
-First, the return value of the previously executed expression.  If an expression does not return anything, the return value should be set to `nil`.
+First, the return value of the previously executed expression.  If an expression does not return anything, the return value is `nil`.
 
-Second, the current context.  This contains a map of all available object types.  It contains a map of built in functions, and variables that have been assigned.
+Second, the current context.  This contains a map of all available object types.  It also contains a map of variables and functions that are in scope.  This second map amounts to every variable ever instantiated and all the built in functions.
 
 ## Reserved words
 
-The following words are reserved: `is`, `a`, `list`, `add`, `remove`, `true`, `false`.
+The following words are reserved: `is`, `a`, `list`, `add`, `remove`, `to`, `from`, `true`, `false`.
 
 ## Variables
 
@@ -44,10 +44,11 @@ Variables are denoted by single words that match this regex: `[A-Za-z]+`.
 
 ### Variable assignment
 
-Simple (non-object) variables can be strings or integers and are assigned, thus:
+Simple (non-object) variables can be strings or integers references to other variables and are assigned, thus:
 
     age is 1
     name is 'Mary'
+    friend is isla
 
 ### Object attribute assignment
 
@@ -63,7 +64,7 @@ Currently, arithmetic is not supported.  This will probably change.
 
 ### Strings
 
-A string literal is delimited by single quotation marks: `'`.  Contents must match this regex: `[A-Za-z0-9 \.,\\]+`.
+A string literal is delimited by a pair of single quotation marks `'` or a pair of double quotation marks `"`.  Contents must match this regex: `^('|\")[A-Za-z0-9 \.,\\']+\1$`.
 
 No string operations are supported, besides assignment to a variable.
 
@@ -73,46 +74,49 @@ Not yet implemented.
 
 ### Objects
 
-Objects must be of an existing type, like `list` or `monster`.  New object types may not be defined in an Isla program.  Objects have zero or more attributes that may be set.  Objects have no methods.
+Objects can be of an existing type, like `list`, or defined by the programmer.  Objects have zero or more attributes that may be set.  Objects have no methods.
 
-#### Instantiation
+#### Instantiation of a built-in type
 
     isla is a person
 
+#### Instantiation of a programmer-defined type
+
+    zach is a giraffe
+
+You can see that, in order to make a new type, `giraffe`, you simply name the type.
+
 ### Attribute assignment
+
+Objects may have any attribute name assigned on them, regardless of whether they were made from built-in and programmer-defined types.
 
     isla is a person
     mary is a person
     isla age is 2
     isla sound is 'pop'
     isla auntie is mary
+    isla sdfjhsdhjfshjejhsscf is 3
 
 Notice how integers, strings and objects may be assigned to an object attribute.
 
 ### Lists
 
-List literals are not supported.
+List literals are not supported.  Lists can contains any combination of integers, strings and objects.  Lists may contain other lists.
 
-Lists are really unordered sets, in that they do not allow multiple instances of items that are deemed equal.
 
-Equality of integers corresponds to equal numerical value.
+Lists are a little strange.  They can only contain one instance of a variable, but can contain many instances of two literals that are identical.  For example:
 
-Equality of strings corresponds to identical sequences of characters (case sensitive).
+    basket is a list
+    add "banana" to basket            => ["banana"]
+    add "banana" to basket            => ["banana" "banana"]
+    banana is a fruit
+    add banana to basket              => ["banana" "banana" banana]
+    add banana to basket              => ["banana" "banana" banana]
+    age is 1
+    add age to basket                 => ["banana" "banana" mary age]
+    add age to basket                 => ["banana" "banana" mary age]
 
-Equality of objects corresponds to identical sets of key/value pairs.  For example:
-
-Equal:
-
-    {:b => 2} {:b => 2}
-    {} {}
-
-Not equal:
-
-    {:a => 1} {:b => 1}
-    {:a => 1} {:a => 2}
-    {:a => 1, :b => 2} {:a => 1}
-
-Lists can contains any combination of integers, strings and objects.  Lists may not contain other lists.
+Think of this in terms of references.  If you put a banana object into a list twice, you have put in two place holders that lead back to the same place.  Thus, the banana object only appears in the list once.  Literals are not references; they are actual things.  Therefore, when you put a string "banana" in and another string "banana" in, these are two separate things, so they both appear in the list.
 
 #### List operations
 
@@ -123,12 +127,12 @@ Lists can contains any combination of integers, strings and objects.  Lists may 
 ##### Addition
 
     items is a list
-    items add 'hi'
+    add 'hi to items
 
 ##### Removal
 
     items is a list
-    items remove 'bye'
+    remove 'bye' from items
 
 ##### Membership
 
@@ -142,7 +146,7 @@ Individual items in lists may not be accessed.
 
 ## Conditionals
 
-I haven't decided how to do these yet.  However, probably only `if` statements will be allowed, and they will occupy the same line as their conditional branch, like: `open door if player has key`.
+I haven't decided how to do these yet.  However, probably only `if` statements will be allowed, and they will occupy the same line as their single conditional branch, like: `open door if player has key`.
 
 ## Functions
 
