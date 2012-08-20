@@ -153,7 +153,7 @@
 
 (deftest test-unknown-scalar-list-add-causes-exception
   (try
-    (interpret (parse "items add 'sword'")
+    (interpret (parse "add 'sword' to items")
                (library/get-initial-env extra-types))
     (is false) ;; should not get called
     (catch Exception e
@@ -161,7 +161,7 @@
 
 (deftest test-unknown-object-attr-list-add-causes-exception
   (try
-    (interpret (parse "isla items add 1")
+    (interpret (parse "add 1 to isla items")
                (library/get-initial-env extra-types))
     (is false) ;; should not get called
     (catch Exception e
@@ -170,33 +170,33 @@
 ;; list addition
 
 (deftest test-add-list
-  (let [env (interpret (parse "items is a list\nitems add 'sword'")
+  (let [env (interpret (parse "items is a list\nadd 'sword' to items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list "sword")))))
 
 (deftest test-add-obj-to-list-works-with-ref
-  (let [env (interpret (parse "items is a list\nmary is a person\nitems add mary")
+  (let [env (interpret (parse "items is a list\nmary is a person\nadd mary to items")
                        (library/get-initial-env extra-types))]
     (is (= (get (:ctx env) "items") (isla-list {:ref "mary"})))))
 
-(deftest test-add-duplicate-item-does-nothing-string
-  (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems add 'sword'")
+(deftest test-add-duplicate-item-string
+  (let [env (interpret (parse "items is a list\nadd 'sword' to items\nadd 'sword' to items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list "sword" "sword")))))
 
-  (let [env (interpret (parse "items is a list\nitems add 1\nitems add 1")
 (deftest test-add-duplicate-item-integer
+  (let [env (interpret (parse "items is a list\nadd 1 to items\nadd 1 to items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list 1 1)))))
 
 (deftest test-add-duplicate-item-does-nothing-obj
   (let [env (interpret (parse "mary is a person\nitems is a list
-                               items add mary\nitems add mary")
+                               add mary to items\nadd mary to items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list ((get extra-types "person")))))))
 
 (deftest test-add-to-obj-attribute-list
-  (let [env (interpret (parse "isla is a person\nisla items add 1")
+  (let [env (interpret (parse "isla is a person\nadd 1 to isla items")
                        (library/get-initial-env extra-types))]
     (is (= (-> (resolve- {:ref "isla"} env) :items)
            (isla-list 1)))))
@@ -204,36 +204,36 @@
 ;; list removal
 
 (deftest test-remove-list
-  (let [env (interpret (parse "items is a list\nitems add 'sword'\nitems remove 'sword'")
+  (let [env (interpret (parse "items is a list\nadd 'sword' to items\nremove 'sword' from items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list)))))
 
 (deftest test-remove-obj-from-list-works-with-ref
   (let [env (interpret (parse "items is a list\nmary is a person
-                            items add mary\nitems remove mary")
+                            add mary to items\nremove mary from items")
                        (library/get-initial-env extra-types))]
     (is (= (get (:ctx env) "items") (isla-list)))))
 
 (deftest test-remove-obj-list
   (let [env (interpret (parse "mary is a person\nitems is a list
-                            items add mary\nitems remove mary")
+                            add mary to items\nremove mary from items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list)))))
 
 (deftest test-remove-non-existent-item-does-nothing-string
-  (let [env (interpret (parse "items is a list\nitems add 'a'\nitems remove 'b'")
+  (let [env (interpret (parse "items is a list\nadd 'a' to items\nremove 'b' from items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list "a")))))
 
 (deftest test-remove-non-existent-item-does-nothing-integer
-  (let [env (interpret (parse "items is a list\nitems add 1\nitems remove 2")
+  (let [env (interpret (parse "items is a list\nadd 1 to items\nremove 2 from items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env) (isla-list 1)))))
 
 (deftest test-remove-non-existent-item-does-nothing-obj
   (let [env (interpret (parse "mary is a person\nmary age is 1
                             isla is a person\nitems is a list
-                            items add isla\nitems add mary\nitems remove mary")
+                            add isla to items\nadd mary to items\nremove mary to items")
                        (library/get-initial-env extra-types))]
     (is (= (resolve- {:ref "items"} env)
            (isla-list ((get extra-types "person")))))))

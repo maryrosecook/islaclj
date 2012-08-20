@@ -63,7 +63,7 @@
 (deftest test-look-at-item
   (let [summary "The floors are made of marble."
         story-str (str "palace is a room
-                        daisy is a flower\ndaisy summary is 'woo'\npalace items add daisy
+                        daisy is a flower\ndaisy summary is 'woo'\nadd daisy to palace items
                         my room is palace")
         story (init-story story-str)]
     (is (= (:out (run-command story "look at daisy"))
@@ -77,7 +77,7 @@
 
 (deftest test-look-non-existent-item-items-in-room
   (let [story-str (str "palace is a room
-                        daisy is a flower\npalace items add daisy
+                        daisy is a flower\nadd daisy to palace items
                         my room is palace")
         story (init-story story-str)]
     (is (re-find #"no gun here"
@@ -140,7 +140,7 @@
 
 (deftest test-can-pick-up
   (let [story-str (str "palace is a room\ndaisy is a flower
-                        palace items add daisy\nmy room is palace")
+                        add daisy to palace items\nmy room is palace")
         story (init-story story-str)
         result (run-command story "pick up daisy")]
     (is (re-find #"picked up the daisy" (:out result)))
@@ -165,7 +165,7 @@
 
 (deftest test-get-pick-up-suggestion-if-put-pick-and-something-in-room
   (let [story-str (str "palace is a room\ndaisy is a flower
-                        palace items add daisy\nmy room is palace")
+                        add daisy to palace items\nmy room is palace")
         story (init-story story-str)
         result (run-command story "pick")]
     (is (re-find #"saying 'pick up daisy'" (:out result)))

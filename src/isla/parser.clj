@@ -7,7 +7,7 @@
          alternatives is-type pattern-sequence pattern
          pattern-sequence-selector one-token-pattern
          -root -block -expression -type-assignment -value-assignment -invocation
-         -nl -integer -is-a -is -string -assignee -value -identifier
+         -nl -integer -is-a -is -to-from -string -assignee -value -identifier
          -scalar -object -variable -literal -add -remove -array-operation
          -list-operation)
 
@@ -48,8 +48,8 @@
 
 (defn -array-operation [tokens]
   (when-let [{nodes :nodes left-tokens :left-tokens}
-             (pattern-sequence tokens [-assignee -list-operation -value -nl])]
-    {:node (nnode :array-operation (take 3 nodes)) :left-tokens left-tokens}))
+           (pattern-sequence tokens [-list-operation -value -to-from -assignee -nl] [])]
+    {:node (nnode :array-operation (take 4 nodes)) :left-tokens left-tokens}))
 
 (defn -invocation [tokens]
   (when-let [{nodes :nodes left-tokens :left-tokens}
@@ -72,6 +72,9 @@
 
 (defn -nl [tokens] (one-token-pattern tokens :nl :nl))
 
+(defn -to-from [tokens]
+  (one-token-pattern tokens #"to|from" :to-from (fn [x] [:to-from])))
+
 (defn -is [tokens]
   (one-token-pattern tokens #"is" :is (fn [x] [:is])))
 
@@ -83,9 +86,11 @@
 
 ;; values
 
-(defn -identifier [tokens] (one-token-pattern tokens
-                                              #"(?!^(is|add|remove)$)[A-Za-z]+"
-                                              :identifier))
+(defn -identifier [tokens]
+  (let [keywords "is|add|remove|to|from"]
+    (one-token-pattern tokens
+                       (re-pattern (str "(?!^(" keywords ")$)[A-Za-z]+"))
+                       :identifier)))
 
 (defn -value [tokens]
   (pattern-sequence-selector tokens [-literal -variable] :value))

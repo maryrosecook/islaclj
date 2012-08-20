@@ -41,7 +41,7 @@
     (nreturn new-ctx)))
 
 (defmethod interpret :array-operation [node env]
-  (let [assignee (utils/extract node [:c 0])
+  (let [assignee (utils/extract node [:c 3])
         ;; little hack - dive into assignee, get object/scalar node and evaluate value
         original-list (:val (evaluate-value (utils/extract assignee [:c 0]) env))]
     (if (nil? original-list)
@@ -50,8 +50,8 @@
                            (str (first ref) " " (name (second ref)))
                            ref)]
         (utils/thr (str "I do not know of a list called " variable-str ".")))
-      (let [operation (utils/extract node [:c 1 :c 0 :tag])
-            item-eval (interpret (utils/extract node [:c 2]) env)
+      (let [operation (utils/extract node [:c 0 :c 0 :tag])
+            item-eval (interpret (utils/extract node [:c 1]) env)
             item (if (contains? item-eval :ref)
                    {:ref (:ref item-eval)}
                    (:val item-eval))

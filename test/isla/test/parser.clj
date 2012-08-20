@@ -199,19 +199,21 @@
 (deftest test-list-add
   (let [expected-ast {:root [{:block [{:expression
                                       [{:array-operation
-                                        [{:assignee [{:scalar [{:identifier ["items"]}]}]}
-                                         {:list-operation [{:add [:add]}]}
+                                        [{:list-operation [{:add [:add]}]}
                                          {:value [{:variable
                                                    [{:scalar
-                                                     [{:identifier ["sword"]}]}]}]}]}]}]}]}]
-    (check-ast (parse "items add sword") expected-ast)))
+                                                     [{:identifier ["sword"]}]}]}]}
+                                         {:to-from [:to-from]}
+                                         {:assignee [{:scalar [{:identifier ["items"]}]}]}]}]}]}]}]
+    (check-ast (parse "add sword to items") expected-ast)))
 
 (deftest test-list-remove
   (let [expected-ast {:root [{:block [{:expression
                                       [{:array-operation
-                                        [{:assignee [{:scalar [{:identifier ["items"]}]}]}
-                                         {:list-operation [{:remove [:remove]}]}
+                                        [{:list-operation [{:remove [:remove]}]}
                                          {:value [{:variable
                                                    [{:scalar
-                                                     [{:identifier ["sword"]}]}]}]}]}]}]}]}]
-    (check-ast (parse "items remove sword") expected-ast)))
+                                                     [{:identifier ["sword"]}]}]}]}
+                                         {:to-from [:to-from]}
+                                         {:assignee [{:scalar [{:identifier ["items"]}]}]}]}]}]}]}]
+    (check-ast (parse "remove sword from items") expected-ast)))
