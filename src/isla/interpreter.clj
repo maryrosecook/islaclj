@@ -1,6 +1,7 @@
 (ns isla.interpreter
   (:use [clojure.pprint])
   (:use [isla.library])
+  (:use [isla.user :only [isla-list]])
   (:require [clojure.string :as str])
   (:require [isla.story-utils :as story-utils])
   (:require [mrc.utils :as utils]))
@@ -121,7 +122,7 @@
   (assoc env :ret nil))
 
 (defn dispatch-resolution [item]
-  (cond (instance? clojure.lang.PersistentHashSet item)
+  (cond (instance? isla.user.IslaList item)
         :list
 
         (instance? java.util.Map item)
@@ -143,7 +144,7 @@
           (clojure.core/map (fn [[k v]] {k (resolve- v env)}) map)))
 
 (defmethod resolve- :list [list env]
-  (reduce conj #{} (map (fn [e] (resolve- e env)) list)))
+  (reduce conj (isla-list) (map (fn [e] (resolve- e env)) list)))
 
 (defn friendly-class [clazz]
   (last (str/split (str clazz) #"\.")))

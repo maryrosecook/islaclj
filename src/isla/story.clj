@@ -1,5 +1,6 @@
 (ns isla.story
   (:use [clojure.pprint])
+  (:use [isla.user :only [isla-list]])
   (:require [clojure.string :as str])
   (:require [isla.parser :as parser])
   (:require [isla.interpreter :as interpreter])
@@ -134,7 +135,7 @@
 (def types
   {
    "monster" (fn [] (new isla.story.Monster "" ""))
-   "room" (fn [] (new isla.story.Room "" "" #{} :undefined))
+   "room" (fn [] (new isla.story.Room "" "" (isla-list) :undefined))
    "flower" (fn [] (new isla.story.Flower "" ""))
-   "_player" (fn [] (new isla.story.Player "" "" :undefined #{}))
+   "_player" (fn [] (new isla.story.Player "" "" :undefined (isla-list)))
    })

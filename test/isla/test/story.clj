@@ -1,7 +1,8 @@
 (ns isla.test.story
   (:use [clojure.test])
   (:use [clojure.pprint])
-  (:use [isla.story]))
+  (:use [isla.story])
+  (:use [isla.user :only [isla-list]]))
 
 (defn instantiate-with [type-name & args]
   (let [basic-obj ((get types type-name))]
@@ -144,9 +145,9 @@
         result (run-command story "pick up daisy")]
     (is (re-find #"picked up the daisy" (:out result)))
     (is (= (-> result :sto :player :items)
-           #{(new isla.story.Flower "daisy" "")}))
+           (isla-list (new isla.story.Flower "daisy" ""))))
     (is (= (:items (get (:rooms (:sto result)) "palace"))
-           #{}))))
+           (isla-list)))))
 
 (deftest test-get-nothing-to-pick-up-if-put-pick-and-nothing-in-room
   (let [story-str (str "palace is a room\nmy room is palace")
