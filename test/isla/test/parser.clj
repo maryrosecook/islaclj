@@ -198,7 +198,7 @@
 
 (deftest test-list-add
   (let [expected-ast {:root [{:block [{:expression
-                                      [{:array-operation
+                                      [{:list-assignment
                                         [{:list-operation [{:add [:add]}]}
                                          {:value [{:variable
                                                    [{:scalar
@@ -209,7 +209,7 @@
 
 (deftest test-list-remove
   (let [expected-ast {:root [{:block [{:expression
-                                      [{:array-operation
+                                      [{:list-assignment
                                         [{:list-operation [{:remove [:remove]}]}
                                          {:value [{:variable
                                                    [{:scalar

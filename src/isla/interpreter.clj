@@ -40,7 +40,7 @@
         new-ctx (assign (:ctx env) assignee type)]
     (nreturn new-ctx)))
 
-(defmethod interpret :array-operation [node env]
+(defmethod interpret :list-assignment [node env]
   (let [assignee (utils/extract node [:c 3])
         ;; little hack - dive into assignee, get object/scalar node and evaluate value
         original-list (:val (evaluate-value (utils/extract assignee [:c 0]) env))]
