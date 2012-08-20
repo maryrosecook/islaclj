@@ -11,9 +11,12 @@
   (def isla-ctx
     {
      ;; fns
-     "write" (fn [env str]
-               (story-utils/output str) ;; print out
-               str) ;; add to context
+     "write" (fn [env param]
+               (let [result (cond (map? param) (str "a " (:type (meta param)))
+                                  (set? param) (apply str (interpose "\n" param))
+                                  :default     param)]
+                 (story-utils/output result)
+                 result)) ;; add to context
 
 
      ;; types
