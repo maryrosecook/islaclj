@@ -101,7 +101,7 @@
   (utils/extract node [:c 0]))
 
 (defmethod interpret :string [node _]
-  (str/replace (utils/extract node [:c 0]) "'" ""))
+  (utils/extract node [:c 0]))
 
 (defmulti assign (fn [_ assignee-node _] (utils/extract assignee-node [:c 0 :tag])))
 

@@ -119,8 +119,11 @@
                      (fn [x] [(Integer/parseInt (first tokens))])))
 
 (defn -string [tokens]
-  (one-token-pattern tokens #"'[A-Za-z0-9 \.,\\]+'" :string
-                     (fn [x] [(str/replace (first tokens) "'" "")])))
+  (one-token-pattern tokens #"^('|\")[A-Za-z0-9 \.,\\']+\1$" :string
+                     (fn [x] [((->> (first tokens)
+                                    (re-matcher #"^(\"|')(.*)\1$")
+                                    (re-find))
+                               2)])))
 
 ;; helpers
 
