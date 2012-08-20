@@ -8,8 +8,8 @@
         data (if error
                res
                (let [[out res] result]
-                 {:expr (pr-str expr)
-                  :result (str out (pr-str res))}))]
+                 {:expr (print-str expr)
+                  :result (str out (print-str (or res "")))}))]
 
     (if jsonp
       (resp/jsonp jsonp data)
