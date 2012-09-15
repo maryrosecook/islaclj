@@ -103,6 +103,14 @@
                                   {:is [:is]}
                                   {:value [{:literal [{:string ["cool"]}]}]}]}]}]}]}))
 
+(deftest assignment-string-double
+  (check-ast (parse "isla is \"cool\"")
+             {:root [{:block [{:expression
+                               [{:value-assignment
+                                 [{:assignee [{:scalar [{:identifier ["isla"]}]}]}
+                                  {:is [:is]}
+                                  {:value [{:literal [{:string ["cool"]}]}]}]}]}]}]}))
+
 ;; blocks
 
 (deftest two-expression-block
