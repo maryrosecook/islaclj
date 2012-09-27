@@ -4,6 +4,12 @@
             [hiccup.element :refer [javascript-tag link-to unordered-list]]
             [hiccup.page :refer [include-css include-js html5]]))
 
+(defn footer []
+  [:div.footer "<a href='/'>home</a>&nbsp;
+                <a href='/repl'>try isla</a>&nbsp;
+                <a href='http://github.com/maryrosecook/isla'>github</a>&nbsp;
+                <a href='http://maryrosecook.com'>mary rose cook</a>"])
+
 (defn repl-html [mode title]
   (html5
    [:head
@@ -36,12 +42,6 @@
       (javascript-tag
        (str "mode = '" mode "';"))]]]
    (footer)))
-
-(defn footer []
-  [:div.footer "<a href='/'>home</a>&nbsp;
-                <a href='/repl'>try isla</a>&nbsp;
-                <a href='http://github.com/maryrosecook/isla'>github</a>&nbsp;
-                <a href='http://maryrosecook.com'>mary rose cook</a>"])
 
 (defpage "/repl" []
   (repl-html "isla" "Try Isla"))
