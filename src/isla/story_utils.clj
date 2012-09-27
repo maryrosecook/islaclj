@@ -1,4 +1,5 @@
-(ns isla.story-utils)
+(ns isla.story-utils
+  (:require [clojure.string :as str]))
 
 (defn take-input []
   (print "$ ")
@@ -6,4 +7,8 @@
   (read-line))
 
 (defn output [& outs]
-  (apply println " " outs))
+  (let [output (reduce (fn [acc x]
+                         (str acc "  " x "\n"))
+                       "" (str/split-lines (apply str outs)))]
+    (println output)
+    output))
