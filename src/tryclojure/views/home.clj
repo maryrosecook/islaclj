@@ -61,43 +61,22 @@
       [:div#container
        [:div.prose-holder
         [:div.prose
-         [:p "Use Isla to write your own story:
-          "]
          [:div.story.story-code "
-           <span class='identifier'>my</span> <span class='identifier'>name</a>
-           <span class='keyword'>is</a> <span class='string'>'Mary'</a><br/><br/>
+           <span class='identifier'>isla</span> <span class='keyword'>is a</span>
+           <span class='type'>person</span><br/>
+           <span class='identifier'>isla</span> <span class='identifier'>lunch</span>
+           <span class='keyword'>is</span> <span class='string'>'Jelly Tots'</span><br/>
+           <br/>
+           <span class='identifier'>drum</span> <span class='keyword'>is a</span>
+           <span class='type'>toy</span><br/>
+           <br/>
 
-           <span class='identifier'>my</a> <span class='identifier'>summary</a>
-           <span class='keyword'>is</a> <span class='string'>'You are a boy.
-           You have no shoes.'</a><br/><br/>
-
-           <span class='identifier'>hallway</a> <span class='keyword'>is a</a>
-           <span class='type'>room</a><br/><br/>
-
-           <span class='identifier'>hallway</a> <span class='identifier'>summary</a>
-           <span class='keyword'>is</a>
-           <span class='string'>'A candle burns on a table.'</a>
+           <span class='identifier'>isla</span> <span class='identifier'>toys</span>
+           <span class='keyword'>is a</span> <span class='type'>list</span><br/>
+           <span class='keyword'>add</span> <span class='identifier'>drum</span>
+           <span class='keyword'>to</span>
+           <span class='identifier'>isla</span> <span class='identifier'>toys</span><br/>
           "]
-         [:p "
-           Then, play through your adventure:
-          "]
-         [:div.story.story-playthrough "
-           <span class='command'>> play The Hallway</span>
-           <div class='output'>Are you sitting comfortably? Then, we shall begin.</div>
-           <span class='command'>> look</span>
-           <div class='output'>You are in a hallway.  A candle burns on a table.
-           You can see a door.</div>
-           <span class='command'>> open door</span>
-           <div class='output'>The door is locked.</div>
-           <span class='command'>> look at table</span>
-           <div class='output'>You find a key.</div>
-          "]
-         [:p "
-           No public demo, yet.  The
-           <a href='http://github.com/maryrosecook/isla'>code</a> is on github.
-          "]
-         ]]
-       [:div.footer "by <a href='http://maryrosecook.com'>mary rose cook</a>"]
          ]]]
        (footer)
 
