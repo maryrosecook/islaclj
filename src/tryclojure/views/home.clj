@@ -34,8 +34,14 @@
 
        [:div#console.console]]
       (javascript-tag
-       (str "mode = '" mode "';"))]]]))
+       (str "mode = '" mode "';"))]]]
+   (footer)))
 
+(defn footer []
+  [:div.footer "<a href='/'>home</a>&nbsp;
+                <a href='/repl'>try isla</a>&nbsp;
+                <a href='http://github.com/maryrosecook/isla'>github</a>&nbsp;
+                <a href='http://maryrosecook.com'>mary rose cook</a>"])
 
 (defpage "/repl" []
   (repl-html "isla" "Try Isla"))
@@ -92,6 +98,9 @@
           "]
          ]]
        [:div.footer "by <a href='http://maryrosecook.com'>mary rose cook</a>"]
+         ]]]
+       (footer)
+
        (javascript-tag
         (str "
   var _gaq = _gaq || [];
@@ -102,4 +111,4 @@
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();"))]]]]))
+  })();"))]]]))
