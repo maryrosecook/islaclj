@@ -39,7 +39,7 @@
 (defpage "/storytime" []
   (repl-html "story" "Storytime"))
 
-(defpage "/code" []
+(defpage "/repl" []
   (repl-html "isla" "Try Isla"))
 
 (defpage "/" []
