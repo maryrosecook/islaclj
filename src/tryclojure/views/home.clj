@@ -18,6 +18,20 @@
       [:div#header
        [:h1 title]]
       [:div#container
+       [:div.help "
+         <strong>Assign</strong> &nbsp; &nbsp; &nbsp; <code>age is '2'</code><br/>
+         <strong>Make object</strong> &nbsp;<code>jimmy is a giraffe</code><br/>
+         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<code>jimmy instrument is 'drum'</code><br/>
+         <strong>Make list</strong> &nbsp; &nbsp;<code>band is a list</code><br/>
+         <strong>Change list</strong> &nbsp;<code>add jimmy to band</code><br/>
+         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<code>remove jimmy from band</code><br/>
+         <strong>Output</strong> &nbsp; &nbsp; &nbsp;&nbsp;<code>write band</code><br/>
+
+
+
+
+       "]
+
        [:div#console.console]]
       (javascript-tag
        (str "mode = '" mode "';"))]]]))
