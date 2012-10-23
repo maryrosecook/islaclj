@@ -4,7 +4,7 @@ A programming language for young children.
 
 ## Language guide
 
-https://github.com/maryrosecook/isla/blob/master/languageguide.md
+https://github.com/maryrosecook/isla/wiki/Isla-language-guide
 
 ## Quick start
 
