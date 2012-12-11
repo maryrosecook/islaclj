@@ -2,6 +2,8 @@
 
 A programming language for young children.
 
+**The JavaScript Isla compiler is now the canonical one: https://github.com/maryrosecook/isla**
+
 ## Language guide
 
 https://github.com/maryrosecook/isla/wiki/Isla-language-guide
