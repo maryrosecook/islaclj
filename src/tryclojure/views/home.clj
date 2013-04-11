@@ -43,51 +43,11 @@
        (str "mode = '" mode "';"))]]]
    (footer)))
 
+(defn redirect-to-new-site []
+  (redirect "http://islalanguage.org"))
+
 (defpage "/repl" []
-  (repl-html "isla" "Try Isla"))
+  (redirect-to-new-site))
 
 (defpage "/" []
-  (html5
-   [:head
-    (include-css "/resources/public/css/tryclojure.css")
-
-    [:title "Isla, a programming language for young children"]]
-   [:body
-    [:div#wrapper
-     [:div#content
-      [:div#header
-       [:h1 "Isla"]
-       [:div#subtitle "A programming language for young children"]]
-      [:div#container
-       [:div.prose-holder
-        [:div.prose
-         [:div.story.story-code "
-           <span class='identifier'>isla</span> <span class='keyword'>is a</span>
-           <span class='type'>person</span><br/>
-           <span class='identifier'>isla</span> <span class='identifier'>lunch</span>
-           <span class='keyword'>is</span> <span class='string'>'Jelly Tots'</span><br/>
-           <br/>
-           <span class='identifier'>drum</span> <span class='keyword'>is a</span>
-           <span class='type'>toy</span><br/>
-           <br/>
-
-           <span class='identifier'>isla</span> <span class='identifier'>toys</span>
-           <span class='keyword'>is a</span> <span class='type'>list</span><br/>
-           <span class='keyword'>add</span> <span class='identifier'>drum</span>
-           <span class='keyword'>to</span>
-           <span class='identifier'>isla</span> <span class='identifier'>toys</span><br/>
-          "]
-         ]]]
-       (footer)
-
-       (javascript-tag
-        (str "
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-24453347-2']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();"))]]]))
+  (redirect-to-new-site))
